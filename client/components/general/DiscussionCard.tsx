@@ -19,12 +19,13 @@ const DiscussionCard = () => {
         </Box>
         <Divider />
         <HStack mt={4} justifyContent='space-between' flexDirection={{ base: 'column', lg: 'row' }} alignItems={{ base: 'self-start', lg: 'auto' }}>
-          <HStack gap={{ base: 3, lg: 7 }} flexDirection={{ base: 'column', lg: 'row' }} alignItems={{ base: 'self-start', lg: 'auto' }}>
+          <HStack gap={{ base: 3, lg: 7 }} flexDirection={{ base: 'column', lg: 'row' }} alignItems={{ base: 'self-start', lg: 'center' }}>
             <HStack>
               <Box w={10} h={10} bgColor='gray.200' borderRadius='50%' flexShrink={0}></Box>
-              <Text display='flex' fontSize='sm' gap={2} color='gray.400'>
-                Posted by <Text color='blue.600'>Alakash Raj Dashal</Text>
-              </Text>
+              <HStack fontSize='sm' gap={2}>
+                <Text color='gray.400'>Posted by</Text>
+                <Text color='blue.600'>Alakash Raj Dashal</Text>
+              </HStack>
             </HStack>
             <Text color='gray.400' fontSize='sm'>12hr ago</Text>
           </HStack>
