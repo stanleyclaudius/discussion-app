@@ -1,4 +1,4 @@
-import { RefObject, useRef } from 'react'
+import { useState, RefObject, useRef } from 'react'
 import {
   Modal,
   ModalOverlay,
@@ -8,10 +8,11 @@ import {
   ModalBody,
   ModalFooter,
   Button,
-  FormControl,
-  FormLabel,
-  Input
+  Box,
+  Text
 } from '@chakra-ui/react'
+import Login from '../auth/Login'
+import Register from '../auth/Register'
 
 interface IProps {
   isOpen: boolean
@@ -19,6 +20,8 @@ interface IProps {
 }
 
 const AuthModal = ({ isOpen, onClose }: IProps) => {
+  const [currScreen, setCurrScreen] = useState('login')
+
   const initialRef = useRef() as RefObject<HTMLElement>
   const finalRef = useRef() as RefObject<HTMLElement>
 
@@ -31,25 +34,25 @@ const AuthModal = ({ isOpen, onClose }: IProps) => {
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Sign In</ModalHeader>
+        <ModalHeader>{currScreen === 'login' ? 'Sign In' : 'Sign Up'}</ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
-          <form>
-            <FormControl isRequired mb={6}>
-              <FormLabel htmlFor='email'>Email</FormLabel>
-              <Input id='email' placeholder='Email' />
-            </FormControl>
-            <FormControl isRequired>
-              <FormLabel htmlFor='password'>Password</FormLabel>
-              <Input id='password' placeholder='Password' />
-            </FormControl>
-          </form>
+          {
+            currScreen === 'login'
+            ? <Login />
+            : <Register />
+          }
         </ModalBody>
-        <ModalFooter>
-          <Button colorScheme='blue' mr={4} fontWeight='normal' fontSize='sm'>
-            Save
-          </Button>
-          <Button onClick={onClose} fontWeight='normal' fontSize='sm'>Cancel</Button>
+        <ModalFooter justifyContent='space-between'>
+          <Text _hover={{ textDecoration: 'underline' }} fontSize='sm' cursor='pointer' onClick={() => setCurrScreen(currScreen === 'login' ? 'register' : 'login')}>
+            {currScreen === 'login' ? 'Register' : 'Login'}
+          </Text>
+          <Box>
+            <Button colorScheme='blue' mr={4} fontWeight='normal' fontSize='sm' >
+              Submit
+            </Button>
+            <Button onClick={onClose} fontWeight='normal' fontSize='sm'>Cancel</Button>
+          </Box>
         </ModalFooter>
       </ModalContent>
     </Modal>
