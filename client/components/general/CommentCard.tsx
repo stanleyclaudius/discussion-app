@@ -1,5 +1,5 @@
-import { Box, Divider, Heading, HStack, Text, VStack } from '@chakra-ui/react'
-import { AiOutlineArrowUp, AiOutlineArrowDown } from 'react-icons/ai'
+import { Box, Divider, HStack, Text, VStack } from '@chakra-ui/react'
+import { AiOutlineArrowDown, AiOutlineArrowUp } from 'react-icons/ai'
 
 const CommentCard = () => {
   return (

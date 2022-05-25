@@ -1,6 +1,7 @@
 import { Box, Divider, Heading, HStack, Text, useColorModeValue, VStack } from '@chakra-ui/react'
 import { AiOutlineArrowUp, AiOutlineArrowDown } from 'react-icons/ai'
 import { GoComment } from 'react-icons/go'
+import Link from 'next/link'
 
 const DiscussionCard = () => {
   const bg = useColorModeValue('white', 'gray.900')
@@ -14,7 +15,9 @@ const DiscussionCard = () => {
       </VStack>
       <Box>
         <Box>
-          <Heading as='h3' size='md'>What does the fox say?</Heading>
+          <Link href={`/discussion/fdsf`}>
+            <Heading cursor='pointer' as='h3' size='md'>What does the fox say?</Heading>
+          </Link>
           <Text my={4} color='gray.500' fontSize={14} lineHeight='6'>
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis maxime architecto laborum eligendi autem quaerat doloremque obcaecati, dolore reiciendis quidem deleniti accusamus libero ullam id rem quo ipsum! Eaque ea tempora atque similique? Repellat quidem, sed repudiandae modi aperiam facere, recusandae natus dolore et fugit corporis harum accusantium voluptatem illum. Nulla tenetur qui voluptate doloremque sunt quas necessitatibus tempora suscipit assumenda praesentium voluptates eligendi recusandae, a aliquam iusto quisquam illum expedita minus aperiam delectus saepe ipsam excepturi debitis incidunt. Dolore nam voluptatibus amet suscipit quasi ratione. Reprehenderit quia nobis quisquam vero, expedita sint culpa praesentium excepturi consequuntur, quidem, minima recusandae!
           </Text>

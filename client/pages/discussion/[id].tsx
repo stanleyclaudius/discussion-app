@@ -2,11 +2,14 @@ import { Box, Divider, Heading, HStack, VStack, Text, Button, useDisclosure, use
 import { AiOutlineArrowUp, AiOutlineArrowDown, AiOutlinePlus } from 'react-icons/ai'
 import Head from 'next/head'
 import Navbar from './../../components/general/Navbar'
-import CommentCard from '../../components/general/CommentCard'
-import CommentModal from '../../components/modal/CommentModal'
+import CommentCard from './../../components/general/CommentCard'
+import CommentModal from './../../components/modal/CommentModal'
 
 const DiscussionDetail = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
+
+  const bg = useColorModeValue('blue', 'orange')
+  const txt = useColorModeValue('white', 'black')
 
   return (
     <>
@@ -42,7 +45,7 @@ const DiscussionDetail = () => {
         <Box mt={10}>
           <HStack mb={10} flexDirection={{ base: 'column', lg: 'row' }} alignItems={{ base: 'start', lg: 'center' }} justifyContent='space-between'>
             <Heading as='h3' size='md' mb={{ base: 5, lg: 0 }}>Comments (50)</Heading>
-            <Button onClick={onOpen} leftIcon={<AiOutlinePlus color='white' />} size='sm' colorScheme='blue' p={5} borderRadius={0} fontWeight='normal'>Post Comment</Button>
+            <Button onClick={onOpen} leftIcon={<AiOutlinePlus color={txt} />} size='sm' colorScheme={bg} p={5} borderRadius={0} fontWeight='normal'>Post Comment</Button>
           </HStack>
           <CommentCard />
           <CommentCard />

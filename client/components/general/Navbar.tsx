@@ -1,6 +1,7 @@
-import { Box, Button, Heading, HStack, IconButton, Input, InputGroup, InputLeftElement, Text, useColorMode, useColorModeValue, useDisclosure } from '@chakra-ui/react'
-import Link from 'next/link'
+import { Box, Button, Heading, Input, InputGroup, InputLeftElement, useColorMode, useColorModeValue, useDisclosure } from '@chakra-ui/react'
 import { AiOutlineSearch } from 'react-icons/ai'
+import { BsFillMoonFill, BsFillSunFill } from 'react-icons/bs'
+import Link from 'next/link'
 import AuthModal from './../modal/AuthModal'
 
 const Navbar = () => {
@@ -8,7 +9,8 @@ const Navbar = () => {
   const { colorMode, toggleColorMode } = useColorMode()
   const isDark = colorMode === 'dark'
 
-  const bg = useColorModeValue('blue', 'teal')
+  const bg = useColorModeValue('blue', 'orange')
+  const searchBg = useColorModeValue('gray.100', 'gray.700')
 
   return (
     <>
@@ -24,15 +26,21 @@ const Navbar = () => {
           </Box>
         </Box>
         <Box flex={1} w='100%'>
-          <InputGroup bgColor='gray.100' borderRadius={6}>
+          <InputGroup bgColor={searchBg} borderRadius={6}>
             <InputLeftElement pointerEvents='none' children={<AiOutlineSearch color='gray.300' />} />
             <Input placeholder='Search for Topics' fontSize='sm' />
           </InputGroup>
         </Box>
-        <Box display={{ base: 'none', lg: 'block' }}>
+        <Box display={{ base: 'none', lg: 'flex' }} alignItems='center' gap={8}>
           <Button onClick={onOpen} size='sm' colorScheme={bg} fontWeight='normal'>Login</Button>
+          <Box onClick={toggleColorMode}>
+            {
+              isDark
+              ? <BsFillMoonFill fontSize='20px' cursor='pointer' style={{ color: '#ffb543' }} />
+              : <BsFillSunFill fontSize='20px' cursor='pointer' style={{ color: '#65a9ff' }} />
+            }
+          </Box>
         </Box>
-        <Text onClick={toggleColorMode}>toggle</Text>
       </Box>
 
       <AuthModal
