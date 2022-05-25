@@ -1,10 +1,12 @@
-import { Box, Divider, Heading, HStack, Text, VStack } from '@chakra-ui/react'
+import { Box, Divider, Heading, HStack, Text, useColorModeValue, VStack } from '@chakra-ui/react'
 import { AiOutlineArrowUp, AiOutlineArrowDown } from 'react-icons/ai'
 import { GoComment } from 'react-icons/go'
 
 const DiscussionCard = () => {
+  const bg = useColorModeValue('white', 'gray.900')
+
   return (
-    <HStack alignItems='self-start' boxShadow='0 0 15px rgba(0,0,0,.1)' borderRadius={8} p={7} gap={7} bgColor='white'>
+    <HStack alignItems='self-start' boxShadow='0 0 15px rgba(0,0,0,.1)' borderRadius={8} p={7} gap={7} bgColor={bg}>
       <VStack color='gray.500'>
         <AiOutlineArrowUp fontSize={23} cursor='pointer' />
         <Text>16</Text>

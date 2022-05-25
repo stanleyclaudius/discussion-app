@@ -15,7 +15,7 @@ const CommentCard = () => {
           </HStack>
           <Text mt={4} color='gray.400' fontSize='sm' mb={8}>2022 May 21</Text>
         </HStack>
-        <HStack alignItems='self-start' gap={7} bgColor='white'>
+        <HStack alignItems='self-start' gap={7}>
           <VStack color='gray.500'>
             <AiOutlineArrowUp fontSize={23} cursor='pointer' />
             <Text>16</Text>

@@ -1,4 +1,4 @@
-import { Box, Divider, Heading, HStack, VStack, Text, Button, useDisclosure } from '@chakra-ui/react'
+import { Box, Divider, Heading, HStack, VStack, Text, Button, useDisclosure, useColorModeValue } from '@chakra-ui/react'
 import { AiOutlineArrowUp, AiOutlineArrowDown, AiOutlinePlus } from 'react-icons/ai'
 import Head from 'next/head'
 import Navbar from './../../components/general/Navbar'
@@ -25,7 +25,7 @@ const DiscussionDetail = () => {
           </HStack>
           <Text mt={4} color='gray.400' fontSize='sm' mb={8}>2022 May 21</Text>
         </HStack>
-        <HStack alignItems='self-start' gap={7} bgColor='white'>
+        <HStack alignItems='self-start' gap={7}>
           <VStack color='gray.500'>
             <AiOutlineArrowUp fontSize={23} cursor='pointer' />
             <Text>16</Text>

@@ -1,11 +1,14 @@
-import { Box, Button, Heading, HStack, Input, InputGroup, InputLeftElement, useDisclosure } from '@chakra-ui/react'
+import { Box, Button, Heading, HStack, IconButton, Input, InputGroup, InputLeftElement, Text, useColorMode, useColorModeValue, useDisclosure } from '@chakra-ui/react'
 import Link from 'next/link'
 import { AiOutlineSearch } from 'react-icons/ai'
 import AuthModal from './../modal/AuthModal'
 
-
 const Navbar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const { colorMode, toggleColorMode } = useColorMode()
+  const isDark = colorMode === 'dark'
+
+  const bg = useColorModeValue('blue', 'teal')
 
   return (
     <>
@@ -27,8 +30,9 @@ const Navbar = () => {
           </InputGroup>
         </Box>
         <Box display={{ base: 'none', lg: 'block' }}>
-          <Button onClick={onOpen} size='sm' colorScheme='blue' fontWeight='normal'>Login</Button>
+          <Button onClick={onOpen} size='sm' colorScheme={bg} fontWeight='normal'>Login</Button>
         </Box>
+        <Text onClick={toggleColorMode}>toggle</Text>
       </Box>
 
       <AuthModal
