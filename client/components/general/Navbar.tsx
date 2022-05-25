@@ -1,4 +1,5 @@
 import { Box, Button, Heading, HStack, Input, InputGroup, InputLeftElement, useDisclosure } from '@chakra-ui/react'
+import Link from 'next/link'
 import { AiOutlineSearch } from 'react-icons/ai'
 import AuthModal from './../modal/AuthModal'
 
@@ -8,10 +9,12 @@ const Navbar = () => {
 
   return (
     <>
-      <Box display='flex' flexDirection={{ base: 'column', lg: 'row' }} justifyContent='space-between' alignItems='center' px={{ base: 10, lg: 32 }} py={5} boxShadow='0 0 15px rgba(0,0,0,.1)' gap={{ base: 8, lg: 40 }}>
+      <Box display='flex' flexDirection={{ base: 'column', lg: 'row' }} justifyContent='space-between' alignItems='center' px={{ base: 10, lg: 40 }} py={5} boxShadow='0 0 15px rgba(0,0,0,.2)' gap={{ base: 8, lg: 40 }}>
         <Box display='flex' justifyContent='space-between' w={{ base: '100%', lg: 'auto' }}>
           <Box>
-            <Heading as='h2' size= 'md' fontWeight='normal'>Discussme</Heading>
+            <Link href='/'>
+              <Heading as='h2' size='md' cursor='pointer' fontWeight='normal'>Discussme</Heading>
+            </Link>
           </Box>
           <Box display={{ base: 'block', lg: 'none' }}>
             <Button onClick={onOpen} size='sm' colorScheme='blue' fontWeight='normal'>Login</Button>
