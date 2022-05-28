@@ -1,10 +1,5 @@
 query CurrentLoginUser {
   currentLoginUser {
-    id
-    name
-    email
-    avatar
-    createdAt
-    updatedAt
+    ...RegularUser
   }
 }
