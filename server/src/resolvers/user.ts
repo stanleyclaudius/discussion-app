@@ -1,8 +1,9 @@
-import { Arg, Ctx, Field, Mutation, ObjectType, Resolver } from 'type-graphql'
-import { GraphQLContext } from '../types';
-import { User } from './../entities/User';
+import { Arg, Ctx, Field, Mutation, ObjectType, Query, Resolver } from 'type-graphql'
+import { GraphQLContext } from './../types'
+import { User } from './../entities/User'
+import { validateEmail } from './../utils/validator'
+import { COOKIE_NAME } from './../constant'
 import argon2 from 'argon2'
-import { validateEmail } from '../utils/validator';
 
 @ObjectType()
 class FieldError {
@@ -29,7 +30,7 @@ export class UserResolver {
     @Arg('name', () => String) name: string,
     @Arg('email', () => String) email: string,
     @Arg('password', () => String) password: string,
-    @Ctx() { req, conn }: GraphQLContext
+    @Ctx() { conn }: GraphQLContext
   ) {
     let errors = []
 
@@ -96,5 +97,91 @@ export class UserResolver {
     }
 
     return { user }
+  }
+
+  @Query(() => UserResponse)
+  async login(
+    @Arg('email',  () => String) email: string,
+    @Arg('password', () => String) password: string,
+    @Ctx() { req }: GraphQLContext
+  ) {
+    let errors = []
+
+    if (!email) {
+      errors.push({
+        field: 'Email',
+        message: 'Please provide email address to register.'
+      })
+    } else if (!validateEmail(email)) {
+      errors.push({
+        field: 'Email',
+        message: 'Please provide valid email address to register.'
+      })
+    }
+
+    if (!password) {
+      errors.push({
+        field: 'Password',
+        message: 'Please provide password to register.'
+      })
+    }
+
+    if (errors.length > 0)
+      return { errors }
+
+    const user = await User.findOne({ where: { email } })
+    if (!user) {
+      return {
+        errors: [
+          {
+            field: 'Email',
+            message: 'Email is not registered at system.'
+          }
+        ]
+      }
+    }
+
+    const isPwMatch = await argon2.verify(user.password, password)
+    if (!isPwMatch) {
+      return {
+        errors: [
+          {
+            field: 'Password',
+            message: 'Incorrect password.'
+          }
+        ]
+      }
+    }
+
+    (req.session as any).userId = user.id
+
+    return { user }
+  }
+
+  @Query(() => User, { nullable: true })
+  async currentLoginUser(
+    @Ctx() { req }: GraphQLContext
+  ) {
+    if (!req.session.userId) {
+      return null
+    }
+
+    return User.findOne({ where: { id: parseInt(req.session.userId) } })
+  }
+
+  @Query(() => Boolean)
+  logout(
+    @Ctx() { req, res }: GraphQLContext
+  ) {
+    return new Promise(resolve => req.session.destroy(err => {
+      if (err) {
+        res.clearCookie(COOKIE_NAME)
+        console.log(err)
+        resolve(false)
+        return
+      }
+
+      resolve(true)
+    }))
   }
 }

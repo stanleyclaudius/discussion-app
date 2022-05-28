@@ -20,6 +20,10 @@ export class User extends BaseEntity {
   password!: string
 
   @Field(() => String)
+  @Column({ default: 'https://res.cloudinary.com/devatchannel/image/upload/v1602752402/avatar/avatar_cugq40.png' })
+  avatar!: string
+
+  @Field(() => String)
   @CreateDateColumn()
   createdAt!: Date
 

@@ -7,10 +7,15 @@ import session from 'express-session'
 import { ApolloServer } from 'apollo-server-express'
 import { buildSchema } from 'type-graphql'
 import { DataSource } from 'typeorm'
-import { HelloResolver } from './resolvers/hello'
 import { COOKIE_NAME, __prod__ } from './constant'
 import { User } from './entities/User'
 import { UserResolver } from './resolvers/user'
+
+declare module 'express-session' {
+  export interface SessionData {
+    userId: string
+  }
+}
 
 const main = async() => {
   const conn = await new DataSource({
@@ -56,7 +61,7 @@ const main = async() => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver, UserResolver],
+      resolvers: [UserResolver],
       validate: false
     }),
     context: ({ req, res }) => ({ req, res, conn, redis: redisClient })
