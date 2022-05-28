@@ -36,24 +36,11 @@ const AuthModal = ({ isOpen, onClose }: IProps) => {
       <ModalContent>
         <ModalHeader>{currScreen === 'login' ? 'Sign In' : 'Sign Up'}</ModalHeader>
         <ModalCloseButton />
-        <ModalBody pb={6}>
-          {
-            currScreen === 'login'
-            ? <Login />
-            : <Register />
-          }
-        </ModalBody>
-        <ModalFooter justifyContent='space-between'>
-          <Text _hover={{ textDecoration: 'underline' }} fontSize='sm' cursor='pointer' onClick={() => setCurrScreen(currScreen === 'login' ? 'register' : 'login')}>
-            {currScreen === 'login' ? 'Register' : 'Login'}
-          </Text>
-          <Box>
-            <Button colorScheme='blue' mr={4} fontWeight='normal' fontSize='sm' >
-              Submit
-            </Button>
-            <Button onClick={onClose} fontWeight='normal' fontSize='sm'>Cancel</Button>
-          </Box>
-        </ModalFooter>
+        {
+          currScreen === 'login'
+          ? <Login currScreen={currScreen} setCurrScreen={setCurrScreen} onClose={onClose} />
+          : <Register currScreen={currScreen} setCurrScreen={setCurrScreen} onClose={onClose} />
+        }
       </ModalContent>
     </Modal>
   )

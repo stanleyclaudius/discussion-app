@@ -1,0 +1,21 @@
+mutation Register($name: String!, $email: String!, $password: String!, $passwordConfirmation: String!) {
+  register(
+    name: $name,
+    email: $email,
+    password: $password
+    passwordConfirmation: $passwordConfirmation
+  ) {
+    errors {
+      field
+      message
+    }
+    user {
+      id
+      name
+      email
+      avatar
+      createdAt
+      updatedAt
+    }
+  }
+}

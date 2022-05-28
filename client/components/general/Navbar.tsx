@@ -1,16 +1,26 @@
-import { Box, Button, Heading, Input, InputGroup, InputLeftElement, useColorMode, useColorModeValue, useDisclosure } from '@chakra-ui/react'
+import { Box, Button, Text, Heading, Input, InputGroup, InputLeftElement, useColorMode, useColorModeValue, useDisclosure } from '@chakra-ui/react'
 import { AiOutlineSearch } from 'react-icons/ai'
 import { BsFillMoonFill, BsFillSunFill } from 'react-icons/bs'
 import Link from 'next/link'
 import AuthModal from './../modal/AuthModal'
+import { useCurrentLoginUserQuery, useLogoutMutation } from '../../generated/graphql'
+import { toast } from 'react-toastify'
 
 const Navbar = () => {
+  const [{data, fetching}] = useCurrentLoginUserQuery()
+  const [, logout] = useLogoutMutation()
+
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { colorMode, toggleColorMode } = useColorMode()
   const isDark = colorMode === 'dark'
 
   const bg = useColorModeValue('blue', 'orange')
   const searchBg = useColorModeValue('gray.100', 'gray.700')
+
+  const handleLogout = () => {
+    logout()
+    toast.success('Logout success.')
+  }
 
   return (
     <>
@@ -21,9 +31,24 @@ const Navbar = () => {
               <Heading as='h2' size='md' cursor='pointer' fontWeight='normal'>Discussme</Heading>
             </Link>
           </Box>
-          <Box display={{ base: 'block', lg: 'none' }}>
-            <Button onClick={onOpen} size='sm' colorScheme='blue' fontWeight='normal'>Login</Button>
-          </Box>
+          {
+            !fetching && !data?.currentLoginUser
+            ? (
+              <Box display={{ base: 'block', lg: 'none' }}>
+                <Button onClick={onOpen} size='sm' colorScheme={bg} fontWeight='normal'>Login</Button>
+              </Box>
+            )
+            : (
+              <>
+                <Box display={{ base: 'block', lg: 'none' }}>
+                  <Text>Hi, {data?.currentLoginUser?.name}</Text>
+                </Box>
+                <Box display={{ base: 'block', lg: 'none' }}>
+                  <Button onClick={handleLogout} size='sm' colorScheme={bg} fontWeight='normal'>Logout</Button>
+                </Box>
+              </>
+            )
+          }
         </Box>
         <Box flex={1} w='100%'>
           <InputGroup bgColor={searchBg} borderRadius={6}>
@@ -32,7 +57,18 @@ const Navbar = () => {
           </InputGroup>
         </Box>
         <Box display={{ base: 'none', lg: 'flex' }} alignItems='center' gap={8}>
-          <Button onClick={onOpen} size='sm' colorScheme={bg} fontWeight='normal'>Login</Button>
+          {
+            !fetching && !data?.currentLoginUser
+            ? (
+              <Button onClick={onOpen} size='sm' colorScheme={bg} fontWeight='normal'>Login</Button>
+            )
+            : (
+              <>
+                <Text>Hi, {data?.currentLoginUser?.name}</Text>
+                <Button onClick={handleLogout} size='sm' colorScheme={bg} fontWeight='normal'>Logout</Button>
+              </>
+            )
+          }
           <Box onClick={toggleColorMode}>
             {
               isDark

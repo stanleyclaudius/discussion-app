@@ -4,6 +4,8 @@ import Head from 'next/head'
 import DiscussionCard from './../components/general/DiscussionCard'
 import Navbar from './../components/general/Navbar'
 import PostModal from '../components/modal/PostModal'
+import { withUrqlClient } from 'next-urql'
+import { createUrqlClient } from '../utils/createUrqlClient'
 
 const Home = () => {
   const bg = useColorModeValue('blue', 'orange')
@@ -38,4 +40,4 @@ const Home = () => {
   )
 }
 
-export default Home
+export default withUrqlClient(createUrqlClient)(Home)

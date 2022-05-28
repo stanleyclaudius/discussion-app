@@ -30,6 +30,7 @@ export class UserResolver {
     @Arg('name', () => String) name: string,
     @Arg('email', () => String) email: string,
     @Arg('password', () => String) password: string,
+    @Arg('passwordConfirmation', () => String) passwordConfirmation: string,
     @Ctx() { conn }: GraphQLContext
   ) {
     let errors = []
@@ -62,6 +63,18 @@ export class UserResolver {
       errors.push({
         field: 'Password',
         message: 'Password should be at least 8 characters.'
+      })
+    }
+
+    if (!passwordConfirmation) {
+      errors.push({
+        field: 'Password Confirmation',
+        message: 'Please provide password confirmation.'
+      })
+    } else if (password !== passwordConfirmation) {
+      errors.push({
+        field: 'Password Confirmation',
+        message: 'Password confirmation should be matched.'
       })
     }
 
@@ -99,7 +112,7 @@ export class UserResolver {
     return { user }
   }
 
-  @Query(() => UserResponse)
+  @Mutation(() => UserResponse)
   async login(
     @Arg('email',  () => String) email: string,
     @Arg('password', () => String) password: string,
@@ -169,7 +182,7 @@ export class UserResolver {
     return User.findOne({ where: { id: parseInt(req.session.userId) } })
   }
 
-  @Query(() => Boolean)
+  @Mutation(() => Boolean)
   logout(
     @Ctx() { req, res }: GraphQLContext
   ) {
