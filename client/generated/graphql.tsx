@@ -49,6 +49,12 @@ export type MutationRegisterArgs = {
   passwordConfirmation: Scalars['String'];
 };
 
+export type PaginatedPosts = {
+  __typename?: 'PaginatedPosts';
+  hasMore: Scalars['Boolean'];
+  posts: Array<Post>;
+};
+
 export type Post = {
   __typename?: 'Post';
   content: Scalars['String'];
@@ -63,7 +69,13 @@ export type Post = {
 export type Query = {
   __typename?: 'Query';
   currentLoginUser?: Maybe<User>;
-  getPosts: Array<Post>;
+  getPosts: PaginatedPosts;
+};
+
+
+export type QueryGetPostsArgs = {
+  cursor?: InputMaybe<Scalars['String']>;
+  limit: Scalars['Int'];
 };
 
 export type User = {
@@ -124,10 +136,13 @@ export type CurrentLoginUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type CurrentLoginUserQuery = { __typename?: 'Query', currentLoginUser?: { __typename?: 'User', id: number, name: string, avatar: string, email: string, createdAt: string, updatedAt: string } | null };
 
-export type GetPostsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetPostsQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  cursor?: InputMaybe<Scalars['String']>;
+}>;
 
 
-export type GetPostsQuery = { __typename?: 'Query', getPosts: Array<{ __typename?: 'Post', id: number, title: string, content: string, createdAt: string, updatedAt: string, user: { __typename?: 'User', id: number, name: string, avatar: string, email: string, createdAt: string, updatedAt: string } }> };
+export type GetPostsQuery = { __typename?: 'Query', getPosts: { __typename?: 'PaginatedPosts', hasMore: boolean, posts: Array<{ __typename?: 'Post', id: number, title: string, content: string, createdAt: string, updatedAt: string, user: { __typename?: 'User', id: number, name: string, avatar: string, email: string, createdAt: string, updatedAt: string } }> } };
 
 export const RegularErrorFragmentDoc = gql`
     fragment RegularError on FieldError {
@@ -219,25 +234,28 @@ export function useCurrentLoginUserQuery(options?: Omit<Urql.UseQueryArgs<Curren
   return Urql.useQuery<CurrentLoginUserQuery>({ query: CurrentLoginUserDocument, ...options });
 };
 export const GetPostsDocument = gql`
-    query GetPosts {
-  getPosts {
-    id
-    title
-    content
-    user {
+    query GetPosts($limit: Int!, $cursor: String) {
+  getPosts(limit: $limit, cursor: $cursor) {
+    hasMore
+    posts {
       id
-      name
-      avatar
-      email
+      title
+      content
+      user {
+        id
+        name
+        avatar
+        email
+        createdAt
+        updatedAt
+      }
       createdAt
       updatedAt
     }
-    createdAt
-    updatedAt
   }
 }
     `;
 
-export function useGetPostsQuery(options?: Omit<Urql.UseQueryArgs<GetPostsQueryVariables>, 'query'>) {
+export function useGetPostsQuery(options: Omit<Urql.UseQueryArgs<GetPostsQueryVariables>, 'query'>) {
   return Urql.useQuery<GetPostsQuery>({ query: GetPostsDocument, ...options });
 };
