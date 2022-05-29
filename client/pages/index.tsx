@@ -6,15 +6,20 @@ import Navbar from './../components/general/Navbar'
 import PostModal from '../components/modal/PostModal'
 import { withUrqlClient } from 'next-urql'
 import { createUrqlClient } from '../utils/createUrqlClient'
-import { useCurrentLoginUserQuery } from '../generated/graphql'
+import { useCurrentLoginUserQuery, useGetPostsQuery } from '../generated/graphql'
 
 const Home = () => {
   const [{ data, fetching }] = useCurrentLoginUserQuery()
+  const [{ data: postsData, fetching: postsFetching }] = useGetPostsQuery()
 
   const bg = useColorModeValue('blue', 'orange')
   const txt = useColorModeValue('white', 'black')
 
   const { isOpen, onOpen, onClose } = useDisclosure()
+
+  if (!postsFetching && !postsData) {
+    return <div>Query Failed.</div>
+  }
   
   return (
     <>
@@ -30,10 +35,17 @@ const Home = () => {
           </Box>
         }
         <Box display='flex' flexDirection='column' gap={14}>
-          <DiscussionCard />
-          <DiscussionCard />
-          <DiscussionCard />
-          <DiscussionCard />
+          {
+            postsData?.getPosts.map(item => (
+              <DiscussionCard
+                key={item.id}
+                title={item.title}
+                content={item.content}
+                createdAt={item.createdAt}
+                user={item.user}
+              />
+            ))
+          }
         </Box>
       </Box>
 

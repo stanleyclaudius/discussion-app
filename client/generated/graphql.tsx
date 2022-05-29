@@ -63,6 +63,7 @@ export type Post = {
 export type Query = {
   __typename?: 'Query';
   currentLoginUser?: Maybe<User>;
+  getPosts: Array<Post>;
 };
 
 export type User = {
@@ -122,6 +123,11 @@ export type CurrentLoginUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type CurrentLoginUserQuery = { __typename?: 'Query', currentLoginUser?: { __typename?: 'User', id: number, name: string, avatar: string, email: string, createdAt: string, updatedAt: string } | null };
+
+export type GetPostsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetPostsQuery = { __typename?: 'Query', getPosts: Array<{ __typename?: 'Post', id: number, title: string, content: string, createdAt: string, updatedAt: string, user: { __typename?: 'User', id: number, name: string, avatar: string, email: string, createdAt: string, updatedAt: string } }> };
 
 export const RegularErrorFragmentDoc = gql`
     fragment RegularError on FieldError {
@@ -211,4 +217,27 @@ export const CurrentLoginUserDocument = gql`
 
 export function useCurrentLoginUserQuery(options?: Omit<Urql.UseQueryArgs<CurrentLoginUserQueryVariables>, 'query'>) {
   return Urql.useQuery<CurrentLoginUserQuery>({ query: CurrentLoginUserDocument, ...options });
+};
+export const GetPostsDocument = gql`
+    query GetPosts {
+  getPosts {
+    id
+    title
+    content
+    user {
+      id
+      name
+      avatar
+      email
+      createdAt
+      updatedAt
+    }
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+export function useGetPostsQuery(options?: Omit<Urql.UseQueryArgs<GetPostsQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetPostsQuery>({ query: GetPostsDocument, ...options });
 };

@@ -1,9 +1,18 @@
-import { Box, Divider, Heading, HStack, Text, useColorModeValue, VStack } from '@chakra-ui/react'
+import { Box, Divider, Heading, HStack, Img, Text, useColorModeValue, VStack } from '@chakra-ui/react'
 import { AiOutlineArrowUp, AiOutlineArrowDown } from 'react-icons/ai'
 import { GoComment } from 'react-icons/go'
 import Link from 'next/link'
+import moment from 'moment'
+import { User } from '../../generated/graphql'
 
-const DiscussionCard = () => {
+interface IProps {
+  title: string
+  content: string
+  createdAt: string
+  user: User
+}
+
+const DiscussionCard = ({ title, content, createdAt, user }: IProps) => {
   const bg = useColorModeValue('white', 'gray.900')
 
   return (
@@ -13,26 +22,28 @@ const DiscussionCard = () => {
         <Text>16</Text>
         <AiOutlineArrowDown fontSize={23} cursor='pointer' />
       </VStack>
-      <Box>
+      <Box flex={1}>
         <Box>
           <Link href={`/discussion/fdsf`}>
-            <Heading cursor='pointer' as='h3' size='md'>What does the fox say?</Heading>
+            <Heading cursor='pointer' as='h3' size='md'>{title}</Heading>
           </Link>
           <Text my={4} color='gray.500' fontSize={14} lineHeight='6'>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis maxime architecto laborum eligendi autem quaerat doloremque obcaecati, dolore reiciendis quidem deleniti accusamus libero ullam id rem quo ipsum! Eaque ea tempora atque similique? Repellat quidem, sed repudiandae modi aperiam facere, recusandae natus dolore et fugit corporis harum accusantium voluptatem illum. Nulla tenetur qui voluptate doloremque sunt quas necessitatibus tempora suscipit assumenda praesentium voluptates eligendi recusandae, a aliquam iusto quisquam illum expedita minus aperiam delectus saepe ipsam excepturi debitis incidunt. Dolore nam voluptatibus amet suscipit quasi ratione. Reprehenderit quia nobis quisquam vero, expedita sint culpa praesentium excepturi consequuntur, quidem, minima recusandae!
+            {content}
           </Text>
         </Box>
         <Divider />
-        <HStack mt={4} justifyContent='space-between' flexDirection={{ base: 'column', lg: 'row' }} alignItems={{ base: 'self-start', lg: 'auto' }}>
+        <HStack mt={4} justifyContent='space-between' flexDirection={{ base: 'column', lg: 'row' }} alignItems={{ base: 'self-start', lg: 'center' }}>
           <HStack gap={{ base: 3, lg: 7 }} flexDirection={{ base: 'column', lg: 'row' }} alignItems={{ base: 'self-start', lg: 'center' }}>
             <HStack>
-              <Box w={10} h={10} bgColor='gray.200' borderRadius='50%' flexShrink={0}></Box>
+              <Box w={10} h={10} bgColor='gray.200' borderRadius='50%' flexShrink={0}>
+                <Img src={user.avatar} alt={user.name} w='100%' h='100%' borderRadius='50%' objectFit='cover' />
+              </Box>
               <HStack fontSize='sm' gap={2}>
                 <Text color='gray.400'>Posted by</Text>
-                <Text color='blue.600'>Alakash Raj Dashal</Text>
+                <Text color='blue.600'>{user.name}</Text>
               </HStack>
             </HStack>
-            <Text color='gray.400' fontSize='sm'>12hr ago</Text>
+            <Text color='gray.400' fontSize='sm'>{moment(parseInt(createdAt)).fromNow()}</Text>
           </HStack>
           <HStack color='gray.500'>
             <GoComment />
