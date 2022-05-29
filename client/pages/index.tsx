@@ -6,10 +6,12 @@ import Navbar from './../components/general/Navbar'
 import PostModal from '../components/modal/PostModal'
 import { withUrqlClient } from 'next-urql'
 import { createUrqlClient } from '../utils/createUrqlClient'
+import { useCurrentLoginUserQuery } from '../generated/graphql'
 
 const Home = () => {
-  const bg = useColorModeValue('blue', 'orange')
+  const [{ data, fetching }] = useCurrentLoginUserQuery()
 
+  const bg = useColorModeValue('blue', 'orange')
   const txt = useColorModeValue('white', 'black')
 
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -21,9 +23,12 @@ const Home = () => {
       </Head>
       <Navbar />
       <Box py={10} px={{ base: 8, lg: 40 }}>
-        <Box display='flex' justifyContent='flex-end'>
-          <Button onClick={onOpen} leftIcon={<AiOutlinePlus color={txt} />} size='sm' colorScheme={bg} p={5} mb={10} borderRadius={0} fontWeight='normal'>Create Post</Button>
-        </Box>
+        {
+          (!fetching && data?.currentLoginUser) &&
+          <Box display='flex' justifyContent='flex-end'>
+            <Button onClick={onOpen} leftIcon={<AiOutlinePlus color={txt} />} size='sm' colorScheme={bg} p={5} mb={10} borderRadius={0} fontWeight='normal'>Create Post</Button>
+          </Box>
+        }
         <Box display='flex' flexDirection='column' gap={14}>
           <DiscussionCard />
           <DiscussionCard />

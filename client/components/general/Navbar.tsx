@@ -7,7 +7,7 @@ import { useCurrentLoginUserQuery, useLogoutMutation } from '../../generated/gra
 import { toast } from 'react-toastify'
 
 const Navbar = () => {
-  const [{data, fetching}] = useCurrentLoginUserQuery()
+  const [{ data, fetching }] = useCurrentLoginUserQuery()
   const [, logout] = useLogoutMutation()
 
   const { isOpen, onOpen, onClose } = useDisclosure()

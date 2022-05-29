@@ -9,7 +9,9 @@ import { buildSchema } from 'type-graphql'
 import { DataSource } from 'typeorm'
 import { COOKIE_NAME, __prod__ } from './constant'
 import { User } from './entities/User'
+import { Post } from './entities/Post'
 import { UserResolver } from './resolvers/user'
+import { PostResolver } from './resolvers/post'
 
 declare module 'express-session' {
   export interface SessionData {
@@ -25,7 +27,7 @@ const main = async() => {
     password: 'root',
     logging: true,
     synchronize: true,
-    entities: [User]
+    entities: [User, Post]
   })
 
   conn.initialize()
@@ -61,7 +63,7 @@ const main = async() => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [UserResolver],
+      resolvers: [UserResolver, PostResolver],
       validate: false
     }),
     context: ({ req, res }) => ({ req, res, conn, redis: redisClient })

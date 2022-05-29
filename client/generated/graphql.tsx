@@ -23,9 +23,16 @@ export type FieldError = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createPost: Post;
   login: UserResponse;
   logout: Scalars['Boolean'];
   register: UserResponse;
+};
+
+
+export type MutationCreatePostArgs = {
+  content: Scalars['String'];
+  title: Scalars['String'];
 };
 
 
@@ -40,6 +47,17 @@ export type MutationRegisterArgs = {
   name: Scalars['String'];
   password: Scalars['String'];
   passwordConfirmation: Scalars['String'];
+};
+
+export type Post = {
+  __typename?: 'Post';
+  content: Scalars['String'];
+  createdAt: Scalars['String'];
+  id: Scalars['Int'];
+  title: Scalars['String'];
+  updatedAt: Scalars['String'];
+  user: User;
+  userId: Scalars['Int'];
 };
 
 export type Query = {
@@ -68,6 +86,14 @@ export type RegularErrorFragment = { __typename?: 'FieldError', field: string, m
 export type RegularUserFragment = { __typename?: 'User', id: number, name: string, avatar: string, email: string, createdAt: string, updatedAt: string };
 
 export type RegularUserResponseFragment = { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, user?: { __typename?: 'User', id: number, name: string, avatar: string, email: string, createdAt: string, updatedAt: string } | null };
+
+export type CreatePostMutationVariables = Exact<{
+  title: Scalars['String'];
+  content: Scalars['String'];
+}>;
+
+
+export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'Post', id: number, title: string, content: string, createdAt: string, updatedAt: string } };
 
 export type LoginMutationVariables = Exact<{
   email: Scalars['String'];
@@ -124,6 +150,21 @@ export const RegularUserResponseFragmentDoc = gql`
 }
     ${RegularErrorFragmentDoc}
 ${RegularUserFragmentDoc}`;
+export const CreatePostDocument = gql`
+    mutation CreatePost($title: String!, $content: String!) {
+  createPost(title: $title, content: $content) {
+    id
+    title
+    content
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+export function useCreatePostMutation() {
+  return Urql.useMutation<CreatePostMutation, CreatePostMutationVariables>(CreatePostDocument);
+};
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!) {
   login(email: $email, password: $password) {
