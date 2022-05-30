@@ -1,5 +1,5 @@
-import { dedupExchange, errorExchange, fetchExchange, stringifyVariables } from "urql";
-import { CurrentLoginUserDocument, CurrentLoginUserQuery, LoginMutation, LogoutMutation, CreatePostMutation, GetPostsQuery, GetPostsDocument } from "../generated/graphql";
+import { dedupExchange, fetchExchange, stringifyVariables } from "urql";
+import { CurrentLoginUserDocument, CurrentLoginUserQuery, LoginMutation, LogoutMutation } from "../generated/graphql";
 import { betterUpdateQuery } from "./betterUpdateQuery,";
 import { cacheExchange, Resolver } from '@urql/exchange-graphcache'
 
@@ -52,17 +52,17 @@ export const createUrqlClient = (ssrExchange: any) => ({
       },
       resolvers: {
         Query: {
-          posts: cursorPagination()
+          getPosts: cursorPagination()
         }
       },
       updates: {
         Mutation: {
           createPost: (_result, args, cache, info) => {
             const allFields = cache.inspectFields('Query');
-            const fieldInfos = allFields.filter(info => info.fieldName === 'posts');
+            const fieldInfos = allFields.filter(info => info.fieldName === 'getPosts');
   
             fieldInfos.forEach(fi => {
-              cache.invalidate('Query', 'posts', fi.arguments || {})
+              cache.invalidate('Query', 'getPosts', fi.arguments || {})
             })
           },
           logout: (_result, args, cache, info) => {
@@ -92,7 +92,6 @@ export const createUrqlClient = (ssrExchange: any) => ({
         }
       }
     }),
-    // errorExchange,
     ssrExchange,
     fetchExchange
   ]
