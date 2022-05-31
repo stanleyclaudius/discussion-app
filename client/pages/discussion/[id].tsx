@@ -9,6 +9,7 @@ import { useRouter } from 'next/router'
 import { withUrqlClient } from 'next-urql'
 import { createUrqlClient } from '../../utils/createUrqlClient'
 import moment from 'moment'
+import { formattedDate } from '../../utils/formatter'
 
 const DiscussionDetail = () => {
   const router = useRouter()
@@ -45,7 +46,7 @@ const DiscussionDetail = () => {
               <Text color='blue.600'>{data?.getPostById?.user.name}</Text>
             </HStack>
           </HStack>
-          <Text mt={4} color='gray.400' fontSize='sm' mb={8}>{new Date(parseInt(data?.getPostById?.createdAt!)).toLocaleDateString()}</ Text>
+          <Text mt={4} color='gray.400' fontSize='sm' mb={8}>{formattedDate(data?.getPostById?.createdAt!)}</ Text>
         </HStack>
         <HStack alignItems='self-start' gap={7}>
           <VStack color='gray.500'>
