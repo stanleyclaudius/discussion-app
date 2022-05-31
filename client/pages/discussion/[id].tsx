@@ -1,12 +1,29 @@
-import { Box, Divider, Heading, HStack, VStack, Text, Button, useDisclosure, useColorModeValue } from '@chakra-ui/react'
+import { Box, Divider, Heading, HStack, VStack, Text, Button, useDisclosure, useColorModeValue, Img } from '@chakra-ui/react'
 import { AiOutlineArrowUp, AiOutlineArrowDown, AiOutlinePlus } from 'react-icons/ai'
 import Head from 'next/head'
 import Navbar from './../../components/general/Navbar'
 import CommentCard from './../../components/general/CommentCard'
 import CommentModal from './../../components/modal/CommentModal'
+import { useGetPostByIdQuery, useVoteMutation } from '../../generated/graphql'
+import { useRouter } from 'next/router'
+import { withUrqlClient } from 'next-urql'
+import { createUrqlClient } from '../../utils/createUrqlClient'
+import moment from 'moment'
 
 const DiscussionDetail = () => {
+  const router = useRouter()
+
+  const parsedId = typeof router.query.id === 'string' ? parseInt(router.query.id) : -1
+
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const [{data}] = useGetPostByIdQuery({
+    pause: parsedId === -1,
+    variables: {
+      id: parsedId
+    }
+  })
+
+  const [, vote] = useVoteMutation()
 
   const bg = useColorModeValue('blue', 'orange')
   const txt = useColorModeValue('white', 'black')
@@ -20,24 +37,30 @@ const DiscussionDetail = () => {
       <Box py={14} px={{ base: 8, lg: 40 }}>
         <HStack justifyContent='space-between' mb={9}>
           <HStack gap={3}>
-            <Box w={10} h={10} bgColor='gray.200' borderRadius='50%' flexShrink={0}></Box>
+            <Box w={10} h={10} bgColor='gray.200' borderRadius='50%' flexShrink={0}>
+              <Img src={data?.getPostById?.user.avatar} alt={data?.getPostById?.user.name} w='100%' h='100%' borderRadius='50%' objectFit='cover' />
+            </Box>
             <HStack fontSize='sm' gap={2}>
               <Text color='gray.400'>Posted by</Text>
-              <Text color='blue.600'>Alakash Raj Dashal</Text>
+              <Text color='blue.600'>{data?.getPostById?.user.name}</Text>
             </HStack>
           </HStack>
-          <Text mt={4} color='gray.400' fontSize='sm' mb={8}>2022 May 21</Text>
+          <Text mt={4} color='gray.400' fontSize='sm' mb={8}>{new Date(parseInt(data?.getPostById?.createdAt!)).toLocaleDateString()}</ Text>
         </HStack>
         <HStack alignItems='self-start' gap={7}>
           <VStack color='gray.500'>
-            <AiOutlineArrowUp fontSize={23} cursor='pointer' />
-            <Text>16</Text>
-            <AiOutlineArrowDown fontSize={23} cursor='pointer' />
+            <Box color={data?.getPostById?.voteStatus === 1 ? 'green.300' : undefined} onClick={() => vote({ value: 1, postId: parsedId })}>
+              <AiOutlineArrowUp fontSize={23} cursor='pointer' />
+            </Box>
+            <Text>{data?.getPostById?.point}</Text>
+            <Box color={data?.getPostById?.voteStatus === -1 ? 'red.500' : undefined} onClick={() => vote({ value: -1, postId: parsedId })}>
+              <AiOutlineArrowDown fontSize={23} cursor='pointer' />
+            </Box>
           </VStack>
           <Box>
-            <Heading as='h3' size='md'>What does the fox say?</Heading>
+            <Heading as='h3' size='md'>{data?.getPostById?.title}</Heading>
             <Text my={4} color='gray.500' fontSize={14} lineHeight='6'>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis maxime architecto laborum eligendi autem quaerat doloremque obcaecati, dolore reiciendis quidem deleniti accusamus libero ullam id rem quo ipsum! Eaque ea tempora atque similique? Repellat quidem, sed repudiandae modi aperiam facere, recusandae natus dolore et fugit corporis harum accusantium voluptatem illum. Nulla tenetur qui voluptate doloremque sunt quas necessitatibus tempora suscipit assumenda praesentium voluptates eligendi recusandae, a aliquam iusto quisquam illum expedita minus aperiam delectus saepe ipsam excepturi debitis incidunt. Dolore nam voluptatibus amet suscipit quasi ratione. Reprehenderit quia nobis quisquam vero, expedita sint culpa praesentium excepturi consequuntur, quidem, minima recusandae!
+              {data?.getPostById?.content}
             </Text>
           </Box>
         </HStack>
@@ -61,4 +84,4 @@ const DiscussionDetail = () => {
   )
 }
 
-export default DiscussionDetail
+export default withUrqlClient(createUrqlClient, { ssr: true })(DiscussionDetail)

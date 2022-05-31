@@ -78,7 +78,13 @@ export type Post = {
 export type Query = {
   __typename?: 'Query';
   currentLoginUser?: Maybe<User>;
+  getPostById?: Maybe<Post>;
   getPosts: PaginatedPosts;
+};
+
+
+export type QueryGetPostByIdArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -152,6 +158,13 @@ export type CurrentLoginUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type CurrentLoginUserQuery = { __typename?: 'Query', currentLoginUser?: { __typename?: 'User', id: number, name: string, avatar: string, email: string, createdAt: string, updatedAt: string } | null };
+
+export type GetPostByIdQueryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type GetPostByIdQuery = { __typename?: 'Query', getPostById?: { __typename?: 'Post', id: number, title: string, content: string, point: number, userId: number, voteStatus?: number | null, createdAt: string, updatedAt: string, user: { __typename?: 'User', id: number, name: string, avatar: string, email: string, createdAt: string, updatedAt: string } } | null };
 
 export type GetPostsQueryVariables = Exact<{
   limit: Scalars['Int'];
@@ -259,6 +272,32 @@ export const CurrentLoginUserDocument = gql`
 
 export function useCurrentLoginUserQuery(options?: Omit<Urql.UseQueryArgs<CurrentLoginUserQueryVariables>, 'query'>) {
   return Urql.useQuery<CurrentLoginUserQuery>({ query: CurrentLoginUserDocument, ...options });
+};
+export const GetPostByIdDocument = gql`
+    query GetPostById($id: Int!) {
+  getPostById(id: $id) {
+    id
+    title
+    content
+    point
+    userId
+    voteStatus
+    user {
+      id
+      name
+      avatar
+      email
+      createdAt
+      updatedAt
+    }
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+export function useGetPostByIdQuery(options: Omit<Urql.UseQueryArgs<GetPostByIdQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetPostByIdQuery>({ query: GetPostByIdDocument, ...options });
 };
 export const GetPostsDocument = gql`
     query GetPosts($limit: Int!, $cursor: String) {

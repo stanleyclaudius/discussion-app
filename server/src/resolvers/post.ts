@@ -130,4 +130,29 @@ export class PostResolver {
       hasMore: posts.length === realLimitPlusOne
     }
   }
+
+  @Query(() => Post, { nullable: true })
+  async getPostById(
+    @Arg('id', () => Int) id: number,
+    @Ctx() { req, conn }: GraphQLContext
+  ) {
+    const replacements: any[] = [id]
+
+    if (req.session.userId) {
+      replacements.push(req.session.userId)
+    }
+
+    const post = await conn.query(
+      `
+        SELECT p.*,
+        json_build_object('id', u.id, 'name', u.name, 'avatar', u.avatar, 'email', u.email, 'createdAt', u."createdAt", 'updatedAt', u."updatedAt") user,
+        ${req.session.userId ? '(SELECT value FROM vote WHERE "userId" = $2 AND "postId" = p.id) "voteStatus"' : 'null as "voteStatus"'}
+        FROM post p INNER JOIN public.user u
+        ON u.id = p."userId"
+        WHERE p.id = $1
+      `
+    , replacements)
+
+    return post[0]
+  }
 }

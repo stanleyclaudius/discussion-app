@@ -105,9 +105,14 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
             logout: (_result, args, cache, info) => {
               const allFields = cache.inspectFields('Query');
               const fieldInfos = allFields.filter(info => info.fieldName === 'getPosts');
+              const postIdFieldInfos = allFields.filter(info => info.fieldName === 'getPostById');
     
               fieldInfos.forEach(fi => {
                 cache.invalidate('Query', 'getPosts', fi.arguments || {})
+              })
+
+              postIdFieldInfos.forEach(fi => {
+                cache.invalidate('Query', 'getPostById', fi.arguments || {})
               })
 
               betterUpdateQuery<LogoutMutation, CurrentLoginUserQuery>(
@@ -120,9 +125,14 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
             login: (_result, args, cache, info) => {
               const allFields = cache.inspectFields('Query');
               const fieldInfos = allFields.filter(info => info.fieldName === 'getPosts');
+              const postIdFieldInfos = allFields.filter(info => info.fieldName === 'getPostById');
     
               fieldInfos.forEach(fi => {
                 cache.invalidate('Query', 'getPosts', fi.arguments || {})
+              })
+
+              postIdFieldInfos.forEach(fi => {
+                cache.invalidate('Query', 'getPostById', fi.arguments || {})
               })
               
               betterUpdateQuery<LoginMutation, CurrentLoginUserQuery>(

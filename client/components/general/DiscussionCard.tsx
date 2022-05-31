@@ -26,7 +26,7 @@ const DiscussionCard = ({ post }: IProps) => {
       </VStack>
       <Box flex={1}>
         <Box>
-          <Link href={`/discussion/fdsf`}>
+          <Link href={`/discussion/${post.id}`}>
             <Heading cursor='pointer' as='h3' size='md'>{post.title}</Heading>
           </Link>
           <Text my={4} color='gray.500' fontSize={14} lineHeight='6'>
