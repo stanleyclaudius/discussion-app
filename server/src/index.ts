@@ -12,6 +12,7 @@ import { User } from './entities/User'
 import { Post } from './entities/Post'
 import { UserResolver } from './resolvers/user'
 import { PostResolver } from './resolvers/post'
+import { Vote } from './entities/Vote'
 
 declare module 'express-session' {
   export interface SessionData {
@@ -27,7 +28,7 @@ const main = async() => {
     password: 'root',
     logging: true,
     synchronize: true,
-    entities: [User, Post]
+    entities: [User, Post, Vote]
   })
 
   conn.initialize()

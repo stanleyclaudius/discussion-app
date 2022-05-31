@@ -41,10 +41,7 @@ const Home = () => {
             postsData?.getPosts.posts.map(item => (
               <DiscussionCard
                 key={item.id}
-                title={item.title}
-                content={item.content}
-                createdAt={item.createdAt}
-                user={item.user}
+                post={item}
               />
             ))
           }
@@ -71,4 +68,4 @@ const Home = () => {
   )
 }
 
-export default withUrqlClient(createUrqlClient)(Home)
+export default withUrqlClient(createUrqlClient, { ssr: true })(Home)

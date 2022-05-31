@@ -1,7 +1,9 @@
 import { dedupExchange, fetchExchange, stringifyVariables } from "urql";
-import { CurrentLoginUserDocument, CurrentLoginUserQuery, LoginMutation, LogoutMutation } from "../generated/graphql";
+import { CurrentLoginUserDocument, CurrentLoginUserQuery, LoginMutation, LogoutMutation, VoteMutationVariables } from "../generated/graphql";
 import { betterUpdateQuery } from "./betterUpdateQuery,";
 import { cacheExchange, Resolver } from '@urql/exchange-graphcache'
+import gql from 'graphql-tag'
+import { isServer } from "./isServer";
 
 const cursorPagination = (): Resolver => {
   return (_parent, fieldArgs, cache, info) => {
@@ -39,60 +41,96 @@ const cursorPagination = (): Resolver => {
   };
 };
 
-export const createUrqlClient = (ssrExchange: any) => ({
-  url: 'http://localhost:5000/graphql',
-  fetchOptions: {
-    credentials: 'include' as const,
-  },
-  exchanges: [
-    dedupExchange,
-    cacheExchange({
-      keys: {
-        PaginatedPosts: () => null
-      },
-      resolvers: {
-        Query: {
-          getPosts: cursorPagination()
-        }
-      },
-      updates: {
-        Mutation: {
-          createPost: (_result, args, cache, info) => {
-            const allFields = cache.inspectFields('Query');
-            const fieldInfos = allFields.filter(info => info.fieldName === 'getPosts');
-  
-            fieldInfos.forEach(fi => {
-              cache.invalidate('Query', 'getPosts', fi.arguments || {})
-            })
-          },
-          logout: (_result, args, cache, info) => {
-            betterUpdateQuery<LogoutMutation, CurrentLoginUserQuery>(
-              cache,
-              { query: CurrentLoginUserDocument },
-              _result,
-              () => ({ currentLoginUser: null })
-            )
-          },
-          login: (_result, args, cache, info) => {
-            betterUpdateQuery<LoginMutation, CurrentLoginUserQuery>(
-              cache,
-              { query: CurrentLoginUserDocument },
-              _result,
-              (result, query) => {
-                if (result.login.errors) {
-                  return query
-                } else {
-                  return {
-                    currentLoginUser: result.login.user
+export const createUrqlClient = (ssrExchange: any, ctx: any) => {
+  let cookie = ''
+  if (isServer()) {
+    cookie = ctx.req.headers.cookie
+  }
+
+  return {
+    url: 'http://localhost:5000/graphql',
+    fetchOptions: {
+      credentials: 'include' as const,
+      headers: cookie ? { cookie } : undefined
+    },
+    exchanges: [
+      dedupExchange,
+      cacheExchange({
+        keys: {
+          PaginatedPosts: () => null
+        },
+        resolvers: {
+          Query: {
+            getPosts: cursorPagination()
+          }
+        },
+        updates: {
+          Mutation: {
+            vote: (_result, args, cache, info) => {
+              const { postId, value } = args as VoteMutationVariables
+              const data = cache.readFragment(
+                gql`
+                  fragment _ on Post {
+                    id
+                    point
+                    voteStatus
+                  }
+                `
+              , { id: postId } as any)
+
+              if (data) {
+                if (data.voteStatus === value) {
+                  return
+                }
+
+                const newPoint = (data.point as number) + (!data.voteStatus ? 1 : 2) * value
+                cache.writeFragment(
+                  gql`
+                    fragment __ on Post {
+                      point
+                      voteStatus
+                    }
+                  `
+                , { id: postId, point: newPoint, voteStatus: value } as any)
+              }
+            },
+            createPost: (_result, args, cache, info) => {
+              const allFields = cache.inspectFields('Query');
+              const fieldInfos = allFields.filter(info => info.fieldName === 'getPosts');
+    
+              fieldInfos.forEach(fi => {
+                cache.invalidate('Query', 'getPosts', fi.arguments || {})
+              })
+            },
+            logout: (_result, args, cache, info) => {
+              betterUpdateQuery<LogoutMutation, CurrentLoginUserQuery>(
+                cache,
+                { query: CurrentLoginUserDocument },
+                _result,
+                () => ({ currentLoginUser: null })
+              )
+            },
+            login: (_result, args, cache, info) => {
+              betterUpdateQuery<LoginMutation, CurrentLoginUserQuery>(
+                cache,
+                { query: CurrentLoginUserDocument },
+                _result,
+                (result, query) => {
+                  if (result.login.errors) {
+                    return query
+                  } else {
+                    return {
+                      currentLoginUser: result.login.user
+                    }
                   }
                 }
-              }
-            )
+              )
+            }
           }
         }
-      }
-    }),
-    ssrExchange,
-    fetchExchange
-  ]
-})
+      }),
+      ssrExchange,
+      fetchExchange
+    ]
+  }
+}

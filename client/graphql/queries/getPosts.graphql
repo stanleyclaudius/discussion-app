@@ -5,6 +5,9 @@ query GetPosts($limit: Int!, $cursor: String) {
       id
       title
       content
+      point
+      userId
+      voteStatus
       user {
         id
         name

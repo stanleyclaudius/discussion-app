@@ -1,5 +1,6 @@
 import { Arg, Ctx, Field, Int, Mutation, ObjectType, Query, Resolver, UseMiddleware } from 'type-graphql'
 import { Post } from '../entities/Post'
+import { Vote } from '../entities/Vote'
 import { isAuth } from '../middlewares/isAuth'
 import { GraphQLContext } from '../types'
 
@@ -14,6 +15,59 @@ class PaginatedPosts {
 
 @Resolver(Post)
 export class PostResolver {
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async vote(
+    @Arg('postId', () => Int) postId: number,
+    @Arg('value', () => Int) value: number,
+    @Ctx() { req, conn }:  GraphQLContext
+  ) {
+    const isPositive = value !== -1
+    const realValue = isPositive ? 1 : -1
+    const userId = (req.session as any).userId
+
+    const findVote = await Vote.findOne({ where: { postId, userId } })
+
+    if (findVote && findVote.value !== realValue) {
+      await conn.transaction(async(tm) => {
+        await tm.query(
+          `
+            UPDATE vote
+            SET VALUE = $1
+            WHERE "postId" = $2 AND "userId" = $3
+          `
+        , [realValue, postId, userId])
+
+        await tm.query(
+          `
+            UPDATE post
+            SET point = point + $1
+            WHERE id = $2
+          `
+        , [2 * realValue, postId])
+      })
+    } else if (!findVote) {
+      await conn.transaction(async(tm) => {
+        await tm.query(
+          `
+            INSERT INTO vote("userId", "postId", value)
+            VALUES($1, $2, $3)
+          `
+        , [userId, postId, realValue])
+
+        await tm.query(
+          `
+            UPDATE post
+            SET point = point + $1
+            WHERE id = $2
+          `
+        , [realValue, postId])
+      })
+    }
+
+    return true
+  }
+
   @Mutation(() => Post)
   @UseMiddleware(isAuth)
   async createPost(
@@ -40,24 +94,31 @@ export class PostResolver {
   async getPosts(
     @Arg('limit', () => Int) limit: number,
     @Arg('cursor', () => String, { nullable: true }) cursor: string,
-    @Ctx() { conn }: GraphQLContext
+    @Ctx() { req, conn }: GraphQLContext
   ) {
     const realLimit = Math.min(50, limit)
     const realLimitPlusOne = realLimit + 1
 
     const replacements: any[] = [realLimitPlusOne]
 
+    if (req.session.userId) {
+      replacements.push(req.session.userId)
+    }
+
+    let cursorIdx = 3
     if (cursor) {
       replacements.push(new Date(parseInt(cursor)))
+      cursorIdx = replacements.length
     }
     
     const posts = await conn.query(
       `
         SELECT p.*,
-        json_build_object('id', u.id, 'name', u.name, 'avatar', u.avatar, 'email', u.email, 'createdAt', u."createdAt", 'updatedAt', u."updatedAt") user
+        json_build_object('id', u.id, 'name', u.name, 'avatar', u.avatar, 'email', u.email, 'createdAt', u."createdAt", 'updatedAt', u."updatedAt") user,
+        ${req.session.userId ? '(SELECT value FROM vote WHERE "userId" = $2 AND "postId" = p.id) "voteStatus"' : 'null as "voteStatus"'}
         FROM post p INNER JOIN public.user u
         ON u.id = p."userId"
-        ${cursor ? `WHERE p."createdAt" < $2` : ''}
+        ${cursor ? `WHERE p."createdAt" < $3` : ''}
         ORDER BY p."createdAt" DESC
         LIMIT $1
       `
