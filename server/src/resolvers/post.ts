@@ -27,6 +27,7 @@ export class PostResolver {
     const userId = (req.session as any).userId
 
     const findVote = await Vote.findOne({ where: { postId, userId } })
+    const findPost = await Post.findOne({ where: { id: postId } })
 
     if (findVote && findVote.value !== realValue) {
       await conn.transaction(async(tm) => {
@@ -37,14 +38,14 @@ export class PostResolver {
             WHERE "postId" = $2 AND "userId" = $3
           `
         , [realValue, postId, userId])
-
+        
         await tm.query(
           `
             UPDATE post
             SET point = point + $1
             WHERE id = $2
           `
-        , [2 * realValue, postId])
+        , [(((findPost?.point === 1 && !isPositive) || (findPost?.point === -1 && isPositive)) ? 2 * realValue : realValue), postId])
       })
     } else if (!findVote) {
       await conn.transaction(async(tm) => {
@@ -61,7 +62,7 @@ export class PostResolver {
             SET point = point + $1
             WHERE id = $2
           `
-        , [realValue, postId])
+        , [(((findPost?.point === 1 && !isPositive) || (findPost?.point === -1 && isPositive)) ? 2 * realValue : realValue), postId])
       })
     }
 
