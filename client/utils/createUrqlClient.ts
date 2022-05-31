@@ -103,6 +103,13 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
               })
             },
             logout: (_result, args, cache, info) => {
+              const allFields = cache.inspectFields('Query');
+              const fieldInfos = allFields.filter(info => info.fieldName === 'getPosts');
+    
+              fieldInfos.forEach(fi => {
+                cache.invalidate('Query', 'getPosts', fi.arguments || {})
+              })
+
               betterUpdateQuery<LogoutMutation, CurrentLoginUserQuery>(
                 cache,
                 { query: CurrentLoginUserDocument },
@@ -111,6 +118,13 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
               )
             },
             login: (_result, args, cache, info) => {
+              const allFields = cache.inspectFields('Query');
+              const fieldInfos = allFields.filter(info => info.fieldName === 'getPosts');
+    
+              fieldInfos.forEach(fi => {
+                cache.invalidate('Query', 'getPosts', fi.arguments || {})
+              })
+              
               betterUpdateQuery<LoginMutation, CurrentLoginUserQuery>(
                 cache,
                 { query: CurrentLoginUserDocument },

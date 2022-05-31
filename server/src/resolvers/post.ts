@@ -118,7 +118,7 @@ export class PostResolver {
         ${req.session.userId ? '(SELECT value FROM vote WHERE "userId" = $2 AND "postId" = p.id) "voteStatus"' : 'null as "voteStatus"'}
         FROM post p INNER JOIN public.user u
         ON u.id = p."userId"
-        ${cursor ? `WHERE p."createdAt" < $3` : ''}
+        ${cursor ? `WHERE p."createdAt" < $${cursorIdx}` : ''}
         ORDER BY p."createdAt" DESC
         LIMIT $1
       `
