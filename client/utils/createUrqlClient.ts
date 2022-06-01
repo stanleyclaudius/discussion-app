@@ -114,6 +114,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
               const allFields = cache.inspectFields('Query');
               const fieldInfos = allFields.filter(info => info.fieldName === 'getPosts');
               const postIdFieldInfos = allFields.filter(info => info.fieldName === 'getPostById');
+              const postRepliesFieldInfos = allFields.filter(info => info.fieldName === 'getPostReplies');
     
               fieldInfos.forEach(fi => {
                 cache.invalidate('Query', 'getPosts', fi.arguments || {})
@@ -121,6 +122,10 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
 
               postIdFieldInfos.forEach(fi => {
                 cache.invalidate('Query', 'getPostById', fi.arguments || {})
+              })
+
+              postRepliesFieldInfos.forEach(fi => {
+                cache.invalidate('Query', 'getPostReplies', fi.arguments || {})
               })
 
               betterUpdateQuery<LogoutMutation, CurrentLoginUserQuery>(
@@ -134,6 +139,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
               const allFields = cache.inspectFields('Query');
               const fieldInfos = allFields.filter(info => info.fieldName === 'getPosts');
               const postIdFieldInfos = allFields.filter(info => info.fieldName === 'getPostById');
+              const postRepliesFieldInfos = allFields.filter(info => info.fieldName === 'getPostReplies');
     
               fieldInfos.forEach(fi => {
                 cache.invalidate('Query', 'getPosts', fi.arguments || {})
@@ -141,6 +147,10 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
 
               postIdFieldInfos.forEach(fi => {
                 cache.invalidate('Query', 'getPostById', fi.arguments || {})
+              })
+
+              postRepliesFieldInfos.forEach(fi => {
+                cache.invalidate('Query', 'getPostReplies', fi.arguments || {})
               })
               
               betterUpdateQuery<LoginMutation, CurrentLoginUserQuery>(

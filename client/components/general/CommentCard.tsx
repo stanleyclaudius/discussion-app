@@ -1,6 +1,6 @@
 import { Box, Divider, HStack, Img, Text, VStack } from '@chakra-ui/react'
 import { AiOutlineArrowDown, AiOutlineArrowUp } from 'react-icons/ai'
-import { Post } from '../../generated/graphql'
+import { Post, useVoteMutation } from '../../generated/graphql'
 import { formattedDate } from '../../utils/formatter'
 
 interface IProps {
@@ -8,6 +8,8 @@ interface IProps {
 }
 
 const CommentCard = ({ post }: IProps) => {
+  const [, vote] = useVoteMutation()
+
   return (
     <Box mb={10}>
       <Box mb={10}>
@@ -25,9 +27,13 @@ const CommentCard = ({ post }: IProps) => {
         </HStack>
         <HStack alignItems='self-start' gap={7}>
           <VStack color='gray.500'>
-            <AiOutlineArrowUp fontSize={23} cursor='pointer' />
+            <Box color={post.voteStatus === 1 ? 'green.300' : undefined} onClick={() => vote({ value: 1, postId: post.id })}>
+              <AiOutlineArrowUp fontSize={23} cursor='pointer' />
+            </Box>
             <Text>{post.point}</Text>
-            <AiOutlineArrowDown fontSize={23} cursor='pointer' />
+            <Box color={post.voteStatus === -1 ? 'red.500' : undefined} onClick={() => vote({ value: -1, postId: post.id })}>
+              <AiOutlineArrowDown fontSize={23} cursor='pointer' />
+            </Box>
           </VStack>
           <Box>
             <Text color='gray.500' fontSize={14} lineHeight='6'>
