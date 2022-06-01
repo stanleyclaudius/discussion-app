@@ -1,0 +1,13 @@
+mutation ReplyPost($content: String!, $postId: Int!) {
+  replyPost(
+    content: $content,
+    postId: $postId
+  ) {
+    id
+    title
+    point
+    content
+    createdAt
+    updatedAt
+  }
+}

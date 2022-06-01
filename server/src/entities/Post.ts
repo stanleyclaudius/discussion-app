@@ -10,9 +10,9 @@ export class Post extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number
 
-  @Field(() => String)
-  @Column()
-  title!: string
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'text', nullable: true })
+  title!: string | null
   
   @Field(() => String)
   @Column()
@@ -35,6 +35,10 @@ export class Post extends BaseEntity {
 
   @OneToMany(() => Vote, vote => vote.post)
   votes!: Vote[]
+
+  @Field(() => Int)
+  @Column({ type: 'int', default: -1 })
+  replyTo!: number | null
 
   @Field(() => String)
   @CreateDateColumn()

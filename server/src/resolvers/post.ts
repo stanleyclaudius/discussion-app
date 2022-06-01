@@ -119,7 +119,7 @@ export class PostResolver {
         ${req.session.userId ? '(SELECT value FROM vote WHERE "userId" = $2 AND "postId" = p.id) "voteStatus"' : 'null as "voteStatus"'}
         FROM post p INNER JOIN public.user u
         ON u.id = p."userId"
-        ${cursor ? `WHERE p."createdAt" < $${cursorIdx}` : ''}
+        ${cursor ? `WHERE p."createdAt" < $${cursorIdx} AND p."replyTo" = -1` : 'WHERE p."replyTo" = -1'}
         ORDER BY p."createdAt" DESC
         LIMIT $1
       `
@@ -154,5 +154,28 @@ export class PostResolver {
     , replacements)
 
     return post[0]
+  }
+
+  @Mutation(() => Post)
+  @UseMiddleware(isAuth)
+  async replyPost(
+    @Arg('content', () => String) content: string,
+    @Arg('postId', () => Int) postId: number,
+    @Ctx() { req, conn }: GraphQLContext
+  ) {
+    const result = await conn.createQueryBuilder()
+              .insert()
+              .into(Post)
+              .values({
+                content,
+                replyTo: postId,
+                userId: (req.session as any).userId
+              })
+              .returning('*')
+              .execute()
+      
+      const post = result.raw[0]
+
+      return post
   }
 }

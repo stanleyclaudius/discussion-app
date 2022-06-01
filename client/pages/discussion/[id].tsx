@@ -8,7 +8,6 @@ import { useGetPostByIdQuery, useVoteMutation } from '../../generated/graphql'
 import { useRouter } from 'next/router'
 import { withUrqlClient } from 'next-urql'
 import { createUrqlClient } from '../../utils/createUrqlClient'
-import moment from 'moment'
 import { formattedDate } from '../../utils/formatter'
 
 const DiscussionDetail = () => {
@@ -80,6 +79,7 @@ const DiscussionDetail = () => {
       <CommentModal
         isOpen={isOpen}
         onClose={onClose}
+        postId={parsedId}
       />
     </>
   )
