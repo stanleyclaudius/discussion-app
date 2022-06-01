@@ -1,0 +1,21 @@
+query GetPostReplies($postId: Int!) {
+  getPostReplies(postId: $postId) {
+    id
+    title
+    content
+    point
+    userId
+    voteStatus
+    replyTo
+    user {
+      id
+      name
+      avatar
+      email
+      createdAt
+      updatedAt
+    }
+    createdAt
+    updatedAt
+  }
+}

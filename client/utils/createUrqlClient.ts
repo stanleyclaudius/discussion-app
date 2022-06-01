@@ -1,5 +1,5 @@
 import { dedupExchange, fetchExchange, stringifyVariables } from "urql";
-import { CurrentLoginUserDocument, CurrentLoginUserQuery, LoginMutation, LogoutMutation, VoteMutationVariables } from "../generated/graphql";
+import { CurrentLoginUserDocument, CurrentLoginUserQuery, GetPostRepliesDocument, GetPostRepliesQuery, LoginMutation, LogoutMutation, ReplyPostDocument, ReplyPostMutation, VoteMutationVariables } from "../generated/graphql";
 import { betterUpdateQuery } from "./betterUpdateQuery,";
 import { cacheExchange, Resolver } from '@urql/exchange-graphcache'
 import gql from 'graphql-tag'
@@ -100,6 +100,14 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
     
               fieldInfos.forEach(fi => {
                 cache.invalidate('Query', 'getPosts', fi.arguments || {})
+              })
+            },
+            replyPost: (_result, args, cache, info) => {
+              const allFields = cache.inspectFields('Query');
+              const fieldInfos = allFields.filter(info => info.fieldName === 'getPostReplies');
+
+              fieldInfos.forEach(fi => {
+                cache.invalidate('Query', 'getPostReplies', fi.arguments || {})
               })
             },
             logout: (_result, args, cache, info) => {

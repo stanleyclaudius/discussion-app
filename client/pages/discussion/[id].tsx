@@ -4,7 +4,7 @@ import Head from 'next/head'
 import Navbar from './../../components/general/Navbar'
 import CommentCard from './../../components/general/CommentCard'
 import CommentModal from './../../components/modal/CommentModal'
-import { useGetPostByIdQuery, useVoteMutation } from '../../generated/graphql'
+import { useGetPostByIdQuery, useGetPostRepliesQuery, useVoteMutation } from '../../generated/graphql'
 import { useRouter } from 'next/router'
 import { withUrqlClient } from 'next-urql'
 import { createUrqlClient } from '../../utils/createUrqlClient'
@@ -16,10 +16,18 @@ const DiscussionDetail = () => {
   const parsedId = typeof router.query.id === 'string' ? parseInt(router.query.id) : -1
 
   const { isOpen, onOpen, onClose } = useDisclosure()
+  
   const [{data}] = useGetPostByIdQuery({
     pause: parsedId === -1,
     variables: {
       id: parsedId
+    }
+  })
+
+  const [{data: replies}] = useGetPostRepliesQuery({
+    pause: parsedId === -1,
+    variables: {
+      postId: parsedId
     }
   })
 
@@ -67,12 +75,14 @@ const DiscussionDetail = () => {
         <Divider mt={6} />
         <Box mt={10}>
           <HStack mb={10} flexDirection={{ base: 'column', lg: 'row' }} alignItems={{ base: 'start', lg: 'center' }} justifyContent='space-between'>
-            <Heading as='h3' size='md' mb={{ base: 5, lg: 0 }}>Comments (50)</Heading>
+            <Heading as='h3' size='md' mb={{ base: 5, lg: 0 }}>Comments ({replies?.getPostReplies.length})</Heading>
             <Button onClick={onOpen} leftIcon={<AiOutlinePlus color={txt} />} size='sm' colorScheme={bg} p={5} borderRadius={0} fontWeight='normal'>Post Comment</Button>
           </HStack>
-          <CommentCard />
-          <CommentCard />
-          <CommentCard />
+          {
+            replies?.getPostReplies.map(item => (
+              <CommentCard key={item.id} post={item} />
+            ))
+          }
         </Box>
       </Box>
 

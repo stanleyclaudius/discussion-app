@@ -178,4 +178,30 @@ export class PostResolver {
 
       return post
   }
+
+  @Query(() => [Post])
+  async getPostReplies(
+    @Arg('postId', () => Int) postId: number,
+    @Ctx() { req, conn }: GraphQLContext
+  ) {
+    const replacements: any[] = [postId]
+
+    if (req.session.userId) {
+      replacements.push(req.session.userId)
+    }
+
+    const posts = await conn.query(
+      `
+        SELECT p.*,
+        json_build_object('id', u.id, 'name', u.name, 'avatar', u.avatar, 'email', u.email, 'createdAt', u."createdAt", 'updatedAt', u."updatedAt") user,
+        ${req.session.userId ? '(SELECT value FROM vote WHERE "userId" = $2 AND "postId" = p.id) "voteStatus"' : 'null as "voteStatus"'}
+        FROM post p INNER JOIN public.user u
+        ON u.id = p."userId"
+        WHERE "replyTo" = $1
+        ORDER BY p."createdAt" DESC
+      `
+    , replacements)
+
+    return posts
+  }
 }

@@ -87,12 +87,18 @@ export type Query = {
   __typename?: 'Query';
   currentLoginUser?: Maybe<User>;
   getPostById?: Maybe<Post>;
+  getPostReplies: Array<Post>;
   getPosts: PaginatedPosts;
 };
 
 
 export type QueryGetPostByIdArgs = {
   id: Scalars['Int'];
+};
+
+
+export type QueryGetPostRepliesArgs = {
+  postId: Scalars['Int'];
 };
 
 
@@ -182,13 +188,20 @@ export type GetPostByIdQueryVariables = Exact<{
 
 export type GetPostByIdQuery = { __typename?: 'Query', getPostById?: { __typename?: 'Post', id: number, title?: string | null, content: string, point: number, userId: number, voteStatus?: number | null, createdAt: string, updatedAt: string, user: { __typename?: 'User', id: number, name: string, avatar: string, email: string, createdAt: string, updatedAt: string } } | null };
 
+export type GetPostRepliesQueryVariables = Exact<{
+  postId: Scalars['Int'];
+}>;
+
+
+export type GetPostRepliesQuery = { __typename?: 'Query', getPostReplies: Array<{ __typename?: 'Post', id: number, title?: string | null, content: string, point: number, userId: number, voteStatus?: number | null, replyTo: number, createdAt: string, updatedAt: string, user: { __typename?: 'User', id: number, name: string, avatar: string, email: string, createdAt: string, updatedAt: string } }> };
+
 export type GetPostsQueryVariables = Exact<{
   limit: Scalars['Int'];
   cursor?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type GetPostsQuery = { __typename?: 'Query', getPosts: { __typename?: 'PaginatedPosts', hasMore: boolean, posts: Array<{ __typename?: 'Post', id: number, title?: string | null, content: string, point: number, userId: number, voteStatus?: number | null, createdAt: string, updatedAt: string, user: { __typename?: 'User', id: number, name: string, avatar: string, email: string, createdAt: string, updatedAt: string } }> } };
+export type GetPostsQuery = { __typename?: 'Query', getPosts: { __typename?: 'PaginatedPosts', hasMore: boolean, posts: Array<{ __typename?: 'Post', id: number, title?: string | null, content: string, point: number, userId: number, voteStatus?: number | null, replyTo: number, createdAt: string, updatedAt: string, user: { __typename?: 'User', id: number, name: string, avatar: string, email: string, createdAt: string, updatedAt: string } }> } };
 
 export const RegularErrorFragmentDoc = gql`
     fragment RegularError on FieldError {
@@ -331,6 +344,33 @@ export const GetPostByIdDocument = gql`
 export function useGetPostByIdQuery(options: Omit<Urql.UseQueryArgs<GetPostByIdQueryVariables>, 'query'>) {
   return Urql.useQuery<GetPostByIdQuery>({ query: GetPostByIdDocument, ...options });
 };
+export const GetPostRepliesDocument = gql`
+    query GetPostReplies($postId: Int!) {
+  getPostReplies(postId: $postId) {
+    id
+    title
+    content
+    point
+    userId
+    voteStatus
+    replyTo
+    user {
+      id
+      name
+      avatar
+      email
+      createdAt
+      updatedAt
+    }
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+export function useGetPostRepliesQuery(options: Omit<Urql.UseQueryArgs<GetPostRepliesQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetPostRepliesQuery>({ query: GetPostRepliesDocument, ...options });
+};
 export const GetPostsDocument = gql`
     query GetPosts($limit: Int!, $cursor: String) {
   getPosts(limit: $limit, cursor: $cursor) {
@@ -342,6 +382,7 @@ export const GetPostsDocument = gql`
       point
       userId
       voteStatus
+      replyTo
       user {
         id
         name

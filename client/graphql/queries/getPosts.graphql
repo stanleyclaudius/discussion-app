@@ -8,6 +8,7 @@ query GetPosts($limit: Int!, $cursor: String) {
       point
       userId
       voteStatus
+      replyTo
       user {
         id
         name
