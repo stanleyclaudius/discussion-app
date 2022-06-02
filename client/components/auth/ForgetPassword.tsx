@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Box, Button, Text, FormControl, FormErrorMessage, FormLabel, Input, ModalBody, ModalFooter } from '@chakra-ui/react'
 import { InputChange } from '../../utils/interface'
-import { useLoginMutation } from '../../generated/graphql'
+import { useForgotPasswordMutation, useLoginMutation } from '../../generated/graphql'
 import { toast } from 'react-toastify'
 
 interface IProps {
@@ -14,8 +14,25 @@ const Login = ({ currScreen, setCurrScreen, onClose }: IProps) => {
   const [email, setEmail] = useState('')
   const [isEmailInvalid, setIsEmailInvalid] = useState('')
 
+  const [{ fetching }, forgotPassword] = useForgotPasswordMutation()
+
   const handleSubmit = async() => {
-    
+    if (!email) {
+      setIsEmailInvalid('Please provide your email address.')
+    } else {
+      setIsEmailInvalid('')
+    }
+
+    if (!isEmailInvalid) {
+      const resp = await forgotPassword({ email })
+
+      if (!resp.data?.forgotPassword) {
+        toast.error('Email not registered in system.')
+      } else {
+        toast.success(`Reset password email has been sent to ${email}`)
+        onClose()
+      }
+    }
   }
 
   return (
@@ -34,7 +51,7 @@ const Login = ({ currScreen, setCurrScreen, onClose }: IProps) => {
           Login
         </Text>
         <Box>
-          <Button onClick={handleSubmit} colorScheme='blue' mr={4} fontWeight='normal' fontSize='sm' >
+          <Button isLoading={fetching} onClick={handleSubmit} colorScheme='blue' mr={4} fontWeight='normal' fontSize='sm' >
             Submit
           </Button>
           <Button onClick={onClose} fontWeight='normal' fontSize='sm'>Cancel</Button>

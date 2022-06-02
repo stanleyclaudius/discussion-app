@@ -3,7 +3,9 @@ import { GraphQLContext } from './../types'
 import { User } from './../entities/User'
 import { validateEmail } from './../utils/validator'
 import { COOKIE_NAME } from './../constant'
+import { v4 } from 'uuid'
 import argon2 from 'argon2'
+import sendEmail from '../utils/sendMail'
 
 @ObjectType()
 class FieldError {
@@ -196,5 +198,30 @@ export class UserResolver {
 
       resolve(true)
     }))
+  }
+
+  @Mutation(() => Boolean)
+  async forgotPassword(
+    @Arg('email', () => String) email: string,
+    @Ctx() { redis }: GraphQLContext
+  ) {
+    const user = await User.findOne({ where: { email } })
+    if (!user)
+      return false
+
+    const token = v4()
+
+    await redis.set(
+      `forgetDiscussme_${token}`,
+      user.id,
+      'EX',
+      1000 * 60 * 60 * 24
+    )
+
+    const url = `http://localhost:3000/reset/${token}`
+
+    await sendEmail(email, 'Forgot Password', url)
+
+    return true
   }
 }
