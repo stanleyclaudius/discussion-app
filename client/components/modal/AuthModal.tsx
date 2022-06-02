@@ -13,6 +13,7 @@ import {
 } from '@chakra-ui/react'
 import Login from '../auth/Login'
 import Register from '../auth/Register'
+import ForgetPassword from './../auth/ForgetPassword'
 
 interface IProps {
   isOpen: boolean
@@ -39,7 +40,9 @@ const AuthModal = ({ isOpen, onClose }: IProps) => {
         {
           currScreen === 'login'
           ? <Login currScreen={currScreen} setCurrScreen={setCurrScreen} onClose={onClose} />
-          : <Register currScreen={currScreen} setCurrScreen={setCurrScreen} onClose={onClose} />
+          : currScreen === 'forget'
+            ? <ForgetPassword currScreen={currScreen} setCurrScreen={setCurrScreen} onClose={onClose} />
+            : <Register currScreen={currScreen} setCurrScreen={setCurrScreen} onClose={onClose} />
         }
       </ModalContent>
     </Modal>

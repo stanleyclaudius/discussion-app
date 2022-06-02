@@ -61,6 +61,7 @@ const Login = ({ currScreen, setCurrScreen, onClose }: IProps) => {
             <FormLabel htmlFor='password'>Password</FormLabel>
             <Input type='password' id='password' placeholder='Password' name='password' value={userData.password} onChange={handleChange} autoComplete='off' />
             <FormErrorMessage>{isPasswordInvalid}</FormErrorMessage>
+            <Text _hover={{ textDecoration: 'underline' }} onClick={() => setCurrScreen('forget')} fontSize={14} mt={2} cursor='pointer' w='fit-content'>Forget password?</Text>
           </FormControl>
         </form>
       </ModalBody>

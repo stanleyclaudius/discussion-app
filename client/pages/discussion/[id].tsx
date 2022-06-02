@@ -41,7 +41,7 @@ const DiscussionDetail = () => {
   return (
     <>
       <Head>
-        <title>Discussme | What Does The Fox Say?</title>
+        <title>Discussme | {data?.getPostById?.title}</title>
       </Head>
       <Navbar />
       <Box py={14} px={{ base: 8, lg: 40 }}>
