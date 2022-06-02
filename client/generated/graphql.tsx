@@ -29,6 +29,7 @@ export type Mutation = {
   logout: Scalars['Boolean'];
   register: UserResponse;
   replyPost: Post;
+  updatePost: Post;
   vote: Scalars['Boolean'];
 };
 
@@ -61,6 +62,13 @@ export type MutationRegisterArgs = {
 export type MutationReplyPostArgs = {
   content: Scalars['String'];
   postId: Scalars['Int'];
+};
+
+
+export type MutationUpdatePostArgs = {
+  content: Scalars['String'];
+  postId: Scalars['Int'];
+  title: Scalars['String'];
 };
 
 
@@ -180,6 +188,15 @@ export type ReplyPostMutationVariables = Exact<{
 
 
 export type ReplyPostMutation = { __typename?: 'Mutation', replyPost: { __typename?: 'Post', id: number, title?: string | null, point: number, content: string, createdAt: string, updatedAt: string } };
+
+export type UpdatePostMutationVariables = Exact<{
+  postId: Scalars['Int'];
+  title: Scalars['String'];
+  content: Scalars['String'];
+}>;
+
+
+export type UpdatePostMutation = { __typename?: 'Mutation', updatePost: { __typename?: 'Post', id: number, title?: string | null, content: string } };
 
 export type VoteMutationVariables = Exact<{
   value: Scalars['Int'];
@@ -319,6 +336,19 @@ export const ReplyPostDocument = gql`
 
 export function useReplyPostMutation() {
   return Urql.useMutation<ReplyPostMutation, ReplyPostMutationVariables>(ReplyPostDocument);
+};
+export const UpdatePostDocument = gql`
+    mutation UpdatePost($postId: Int!, $title: String!, $content: String!) {
+  updatePost(postId: $postId, title: $title, content: $content) {
+    id
+    title
+    content
+  }
+}
+    `;
+
+export function useUpdatePostMutation() {
+  return Urql.useMutation<UpdatePostMutation, UpdatePostMutationVariables>(UpdatePostDocument);
 };
 export const VoteDocument = gql`
     mutation Vote($value: Int!, $postId: Int!) {

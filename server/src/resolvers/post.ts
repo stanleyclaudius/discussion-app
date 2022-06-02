@@ -214,4 +214,22 @@ export class PostResolver {
     await Post.delete({ id: postId, userId: (req.session as any).userId })
     return true
   }
+
+  @Mutation(() => Post)
+  @UseMiddleware(isAuth)
+  async updatePost(
+    @Arg('postId', () => Int) postId: number,
+    @Arg('title', () => String) title: string,
+    @Arg('content', () => String) content: string,
+    @Ctx() { req, conn }: GraphQLContext
+  ) {
+    const result = await conn.createQueryBuilder()
+              .update(Post)
+              .set({ title, content })
+              .where('id = :id AND "userId" = :userId', { id: postId, userId: req.session.userId })
+              .returning('*')
+              .execute()
+
+    return result.raw[0]
+  }
 }

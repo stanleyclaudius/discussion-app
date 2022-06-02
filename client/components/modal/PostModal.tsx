@@ -1,4 +1,4 @@
-import { useState, RefObject, useRef } from 'react'
+import { useState, useEffect, RefObject, useRef } from 'react'
 import {
   Modal,
   ModalOverlay,
@@ -14,17 +14,20 @@ import {
   Textarea,
   FormErrorMessage
 } from '@chakra-ui/react'
-import { useCreatePostMutation } from '../../generated/graphql'
+import { useCreatePostMutation, useUpdatePostMutation } from '../../generated/graphql'
 import { InputChange } from '../../utils/interface'
 import { toast } from 'react-toastify'
+import { ISelectedPost } from '../general/DiscussionCard'
 
 interface IProps {
   isOpen: boolean
-  onClose: () => void
+  onClose: () => void,
+  selectedPost?: ISelectedPost
 }
 
-const PostModal = ({ isOpen, onClose }: IProps) => {
+const PostModal = ({ isOpen, onClose, selectedPost }: IProps) => {
   const [, createPost] = useCreatePostMutation()
+  const [, updatePost] = useUpdatePostMutation()
 
   const initialRef = useRef() as RefObject<HTMLElement>
   const finalRef = useRef() as RefObject<HTMLElement>
@@ -56,13 +59,42 @@ const PostModal = ({ isOpen, onClose }: IProps) => {
     }
 
     if (postData.title && postData.content) {
-      createPost(postData)
-      toast.success(`Post with title ${postData.title} has been created successfully.`)
+      if (selectedPost) {
+        updatePost({
+          postId: selectedPost.id,
+          title: postData.title,
+          content: postData.content
+        })
+        toast.success(`Post has been updated successfully.`)
+      } else {
+        createPost(postData)
+        toast.success(`Post with title ${postData.title} has been created successfully.`)
+      }
+      setPostData({
+        title: '',
+        content: ''
+      })
       onClose()
     } else {
       return
     }
   }
+
+  useEffect(() => {
+    if (selectedPost && Object.keys(selectedPost).length > 0) {
+      setPostData({
+        title: selectedPost.title,
+        content: selectedPost.content
+      })
+    }
+
+    return () => {
+      setPostData({
+        title: '',
+        content: ''
+      })
+    }
+  }, [selectedPost])
 
   return (
     <Modal

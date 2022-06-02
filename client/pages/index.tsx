@@ -11,6 +11,7 @@ import { useState } from 'react'
 
 const Home = () => {
   const [variables, setVariables] = useState({ limit: 2, cursor: null as null | string })
+
   const [{ data, fetching }] = useCurrentLoginUserQuery()
   const [{ data: postsData, fetching: postsFetching }] = useGetPostsQuery({ variables })
 
