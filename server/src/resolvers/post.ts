@@ -204,4 +204,14 @@ export class PostResolver {
 
     return posts
   }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async deletePost(
+    @Arg('postId', () => Int) postId: number,
+    @Ctx() { req }: GraphQLContext
+  ) {
+    await Post.delete({ id: postId, userId: (req.session as any).userId })
+    return true
+  }
 }

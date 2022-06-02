@@ -4,7 +4,7 @@ import Head from 'next/head'
 import Navbar from './../../components/general/Navbar'
 import CommentCard from './../../components/general/CommentCard'
 import CommentModal from './../../components/modal/CommentModal'
-import { useGetPostByIdQuery, useGetPostRepliesQuery, useVoteMutation } from '../../generated/graphql'
+import { useCurrentLoginUserQuery, useGetPostByIdQuery, useGetPostRepliesQuery, useVoteMutation } from '../../generated/graphql'
 import { useRouter } from 'next/router'
 import { withUrqlClient } from 'next-urql'
 import { createUrqlClient } from '../../utils/createUrqlClient'
@@ -30,6 +30,8 @@ const DiscussionDetail = () => {
       postId: parsedId
     }
   })
+
+  const [{data: loginUserData}] = useCurrentLoginUserQuery()
 
   const [, vote] = useVoteMutation()
 
@@ -76,11 +78,14 @@ const DiscussionDetail = () => {
         <Box mt={10}>
           <HStack mb={10} flexDirection={{ base: 'column', lg: 'row' }} alignItems={{ base: 'start', lg: 'center' }} justifyContent='space-between'>
             <Heading as='h3' size='md' mb={{ base: 5, lg: 0 }}>Comments ({replies?.getPostReplies.length})</Heading>
-            <Button onClick={onOpen} leftIcon={<AiOutlinePlus color={txt} />} size='sm' colorScheme={bg} p={5} borderRadius={0} fontWeight='normal'>Post Comment</Button>
+            {
+              loginUserData?.currentLoginUser &&
+              <Button onClick={onOpen} leftIcon={<AiOutlinePlus color={txt} />} size='sm' colorScheme={bg} p={5} borderRadius={0} fontWeight='normal'>Post Comment</Button>
+            }
           </HStack>
           {
             replies?.getPostReplies.map(item => (
-              <CommentCard key={item.id} post={item} />
+              <CommentCard key={item.id} post={item} loginUserId={loginUserData?.currentLoginUser?.id} />
             ))
           }
         </Box>

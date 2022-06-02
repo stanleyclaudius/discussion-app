@@ -24,6 +24,7 @@ export type FieldError = {
 export type Mutation = {
   __typename?: 'Mutation';
   createPost: Post;
+  deletePost: Scalars['Boolean'];
   login: UserResponse;
   logout: Scalars['Boolean'];
   register: UserResponse;
@@ -35,6 +36,11 @@ export type Mutation = {
 export type MutationCreatePostArgs = {
   content: Scalars['String'];
   title: Scalars['String'];
+};
+
+
+export type MutationDeletePostArgs = {
+  postId: Scalars['Int'];
 };
 
 
@@ -136,6 +142,13 @@ export type CreatePostMutationVariables = Exact<{
 
 
 export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'Post', id: number, title?: string | null, point: number, content: string, createdAt: string, updatedAt: string } };
+
+export type DeletePostMutationVariables = Exact<{
+  postId: Scalars['Int'];
+}>;
+
+
+export type DeletePostMutation = { __typename?: 'Mutation', deletePost: boolean };
 
 export type LoginMutationVariables = Exact<{
   email: Scalars['String'];
@@ -245,6 +258,15 @@ export const CreatePostDocument = gql`
 
 export function useCreatePostMutation() {
   return Urql.useMutation<CreatePostMutation, CreatePostMutationVariables>(CreatePostDocument);
+};
+export const DeletePostDocument = gql`
+    mutation DeletePost($postId: Int!) {
+  deletePost(postId: $postId)
+}
+    `;
+
+export function useDeletePostMutation() {
+  return Urql.useMutation<DeletePostMutation, DeletePostMutationVariables>(DeletePostDocument);
 };
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!) {

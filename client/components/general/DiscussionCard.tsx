@@ -1,9 +1,11 @@
 import { Box, Divider, Heading, HStack, Img, Text, useColorModeValue, VStack } from '@chakra-ui/react'
 import { AiOutlineArrowUp, AiOutlineArrowDown } from 'react-icons/ai'
+import { FaTrash } from 'react-icons/fa'
 import { GoComment } from 'react-icons/go'
 import Link from 'next/link'
 import moment from 'moment'
-import { Post, User, useVoteMutation } from '../../generated/graphql'
+import { Post, useCurrentLoginUserQuery, useDeletePostMutation, User, useVoteMutation } from '../../generated/graphql'
+import { toast } from 'react-toastify'
 
 interface IProps {
   post: Post
@@ -11,7 +13,14 @@ interface IProps {
 
 const DiscussionCard = ({ post }: IProps) => {
   const [, vote] = useVoteMutation()
+  const [, deletePost] = useDeletePostMutation()
+  const [{data}] = useCurrentLoginUserQuery()
   const bg = useColorModeValue('white', 'gray.900')
+
+  const handleDeletePost = () => {
+    deletePost({ postId: post.id })
+    toast.success('Post deleted.')
+  }
 
   return (
     <HStack alignItems='self-start' boxShadow='0 0 15px rgba(0,0,0,.1)' borderRadius={8} p={7} gap={7} bgColor={bg}>
@@ -26,9 +35,17 @@ const DiscussionCard = ({ post }: IProps) => {
       </VStack>
       <Box flex={1}>
         <Box>
-          <Link href={`/discussion/${post.id}`}>
-            <Heading cursor='pointer' as='h3' size='md'>{post.title}</Heading>
-          </Link>
+          <HStack justifyContent='space-between' alignItems='center'>
+            <Link href={`/discussion/${post.id}`}>
+              <Heading cursor='pointer' as='h3' size='md'>{post.title}</Heading>
+            </Link>
+            {
+              data?.currentLoginUser?.id === post.userId &&
+              <Box onClick={handleDeletePost} bgColor='red.500' borderRadius='sm' p={2} cursor='pointer'>
+                <FaTrash color='white' />
+              </Box>
+            }
+          </HStack>
           <Text my={4} color='gray.500' fontSize={14} lineHeight='6'>
             {post.content}
           </Text>
