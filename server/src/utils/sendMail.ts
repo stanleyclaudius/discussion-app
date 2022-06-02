@@ -34,7 +34,7 @@ const sendEmail = async(to: string, subject: string, url: string) => {
       subject: `Discussme - ${subject}`,
       html: `
         <div style="border: 5px solid #ccc; padding: 15px;">
-          <h1 style="text-align: center;">Fintrack ${subject}</h1>
+          <h1 style="text-align: center;">Discussme ${subject}</h1>
           <p>Please click below button to proceed the chosen action</p>
           <a style="display: block; text-decoration: none; background: orange; color: #fff; width: 130px; height: 35px; text-align: center; line-height: 35px; margin-top: 15px" href=${url}>Click Me</a>
           <div style="margin-top: 20px;">

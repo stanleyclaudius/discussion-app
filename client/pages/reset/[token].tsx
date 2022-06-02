@@ -1,16 +1,56 @@
 import { useState } from 'react'
 import { Box, Button, FormControl, FormErrorMessage, FormLabel, Heading, Input, useColorModeValue } from "@chakra-ui/react"
+import { useRouter } from 'next/router'
 import Head from "next/head"
 import Navbar from "../../components/general/Navbar"
+import { useResetPasswordMutation } from '../../generated/graphql'
+import { toast } from 'react-toastify'
+import { withUrqlClient } from 'next-urql'
+import { createUrqlClient } from '../../utils/createUrqlClient'
 
 const ResetPassword = () => {
+  const router = useRouter()
+
   const [password, setPassword] = useState('')
   const [passwordConfirmation, setPasswordConfirmation] = useState('')
 
   const [isPasswordInvalid, setIsPasswordInvalid] = useState('')
   const [isPasswordConfirmationInvalid, setIsPasswordConfirmationInvalid] = useState('')
 
+  const [{fetching}, resetPassword] = useResetPasswordMutation()
+
   const bg = useColorModeValue('blue', 'orange')
+
+  const handleSubmit = async() => {
+    if (!password) {
+      setIsPasswordInvalid('Please provide new password.')
+    } else if (password.length < 8) {
+      setIsPasswordInvalid('New password should be at least 8 characters.')
+    } else {
+      setIsPasswordInvalid('')
+    }
+
+    if (!passwordConfirmation) {
+      setIsPasswordConfirmationInvalid('Please provide new password confirmation.')
+    } else if (password !== passwordConfirmation) {
+      setIsPasswordConfirmationInvalid('New password confirmation should be matched.')
+    } else {
+      setIsPasswordConfirmationInvalid('')
+    }
+
+    if (password && password.length >= 8 && passwordConfirmation && password === passwordConfirmation) {
+      const resp = await resetPassword({ newPassword: password, token: (router.query.token) as string })
+
+      console.log(resp)
+
+      if (!resp.data?.resetPassword) {
+        toast.error('Reset password token invalid.')
+      } else {
+        toast.success('Password has been reset successfully.')
+        router.push('/')
+      }
+    }
+  }
 
   return (
     <>
@@ -32,7 +72,7 @@ const ResetPassword = () => {
             <FormErrorMessage>{isPasswordConfirmationInvalid}</FormErrorMessage>
           </FormControl>
           <Box textAlign='center'>
-            <Button colorScheme={bg}>Submit</Button>
+            <Button isLoading={fetching} onClick={handleSubmit} colorScheme={bg}>Submit</Button>
           </Box>
         </form>
       </Box>
@@ -40,4 +80,4 @@ const ResetPassword = () => {
   )
 }
 
-export default ResetPassword
+export default withUrqlClient(createUrqlClient)(ResetPassword)

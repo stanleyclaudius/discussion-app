@@ -224,4 +224,29 @@ export class UserResolver {
 
     return true
   }
+
+  @Mutation(() => Boolean)
+  async resetPassword(
+    @Arg('newPassword', () => String) newPassword: string,
+    @Arg('token', () => String) token: string,
+    @Ctx() { redis }: GraphQLContext
+  ) {
+    const key = `forgetDiscussme_${token}`
+    const userId = await redis.get(key)
+    if (!userId)
+      return false
+
+    const user = await User.findOne({ where: { id: parseInt(userId) } })
+    if (!user)
+      return false
+
+    await User.update(
+      { id: parseInt(userId) },
+      { password: await argon2.hash(newPassword) }
+    )
+    
+    await redis.del(key)
+
+    return true
+  }
 }
