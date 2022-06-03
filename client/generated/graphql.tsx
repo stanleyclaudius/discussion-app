@@ -116,6 +116,7 @@ export type Query = {
   getPostById?: Maybe<Post>;
   getPostReplies: Array<Post>;
   getPosts: PaginatedPosts;
+  searchPost: Array<Post>;
 };
 
 
@@ -132,6 +133,11 @@ export type QueryGetPostRepliesArgs = {
 export type QueryGetPostsArgs = {
   cursor?: InputMaybe<Scalars['String']>;
   limit: Scalars['Int'];
+};
+
+
+export type QuerySearchPostArgs = {
+  keyword: Scalars['String'];
 };
 
 export type User = {
@@ -260,6 +266,13 @@ export type GetPostsQueryVariables = Exact<{
 
 
 export type GetPostsQuery = { __typename?: 'Query', getPosts: { __typename?: 'PaginatedPosts', hasMore: boolean, posts: Array<{ __typename?: 'Post', id: number, title?: string | null, content: string, point: number, userId: number, voteStatus?: number | null, replyTo: number, createdAt: string, updatedAt: string, user: { __typename?: 'User', id: number, name: string, avatar: string, email: string, createdAt: string, updatedAt: string } }> } };
+
+export type SearchPostQueryVariables = Exact<{
+  keyword: Scalars['String'];
+}>;
+
+
+export type SearchPostQuery = { __typename?: 'Query', searchPost: Array<{ __typename?: 'Post', id: number, title?: string | null, content: string, createdAt: string, updatedAt: string, user: { __typename?: 'User', id: number, name: string, avatar: string } }> };
 
 export const RegularErrorFragmentDoc = gql`
     fragment RegularError on FieldError {
@@ -498,4 +511,24 @@ export const GetPostsDocument = gql`
 
 export function useGetPostsQuery(options: Omit<Urql.UseQueryArgs<GetPostsQueryVariables>, 'query'>) {
   return Urql.useQuery<GetPostsQuery>({ query: GetPostsDocument, ...options });
+};
+export const SearchPostDocument = gql`
+    query SearchPost($keyword: String!) {
+  searchPost(keyword: $keyword) {
+    id
+    title
+    content
+    createdAt
+    updatedAt
+    user {
+      id
+      name
+      avatar
+    }
+  }
+}
+    `;
+
+export function useSearchPostQuery(options: Omit<Urql.UseQueryArgs<SearchPostQueryVariables>, 'query'>) {
+  return Urql.useQuery<SearchPostQuery>({ query: SearchPostDocument, ...options });
 };

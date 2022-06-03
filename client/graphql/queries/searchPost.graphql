@@ -1,0 +1,14 @@
+query SearchPost($keyword: String!) {
+  searchPost(keyword: $keyword) {
+    id
+    title
+    content
+    createdAt
+    updatedAt
+    user {
+      id
+      name
+      avatar
+    }
+  }
+}
