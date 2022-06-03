@@ -2,7 +2,6 @@ import { Arg, Ctx, Field, Mutation, ObjectType, Query, Resolver } from 'type-gra
 import { GraphQLContext } from './../types'
 import { User } from './../entities/User'
 import { validateEmail } from './../utils/validator'
-import { COOKIE_NAME } from './../constant'
 import { v4 } from 'uuid'
 import sendEmail from './../utils/sendMail'
 import argon2 from 'argon2'
@@ -190,7 +189,7 @@ export class UserResolver {
   ) {
     return new Promise(resolve => req.session.destroy(err => {
       if (err) {
-        res.clearCookie(COOKIE_NAME)
+        res.clearCookie(`${process.env.COOKIE_NAME}`)
         console.log(err)
         resolve(false)
         return
@@ -212,13 +211,13 @@ export class UserResolver {
     const token = v4()
 
     await redis.set(
-      `forgetDiscussme_${token}`,
+      `${process.env.FORGET_PASSWORD_KEY_PREFIX}${token}`,
       user.id,
       'EX',
       1000 * 60 * 60 * 24
     )
 
-    const url = `http://localhost:3000/reset/${token}`
+    const url = `${process.env.CLIENT_URL}/reset/${token}`
 
     await sendEmail(email, 'Forgot Password', url)
 
@@ -231,7 +230,7 @@ export class UserResolver {
     @Arg('token', () => String) token: string,
     @Ctx() { redis }: GraphQLContext
   ) {
-    const key = `forgetDiscussme_${token}`
+    const key = `${process.env.FORGET_PASSWORD_KEY_PREFIX}${token}`
     const userId = await redis.get(key)
     if (!userId)
       return false

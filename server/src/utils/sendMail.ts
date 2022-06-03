@@ -5,13 +5,11 @@ const OAUTH_PLAYGROUND = 'https://developers.google.com/oauthplayground'
 
 const sendEmail = async(to: string, subject: string, url: string) => {
   const oAuth2Client = new OAuth2Client(
-    // process.env.GOOGLE_CLIENT_ID,
-    '339838492859-tasrm3s56o7nv6rrnhvjb8hndnctcu6c.apps.googleusercontent.com',
-    // process.env.GOOGLE_CLIENT_SECRET,
-    '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',
+    process.env.GOOGLE_CLIENT_ID,
+    process.env.GOOGLE_CLIENT_SECRET,
     OAUTH_PLAYGROUND
   )
-  oAuth2Client.setCredentials({ refresh_token: '1//04B6mSqm8e4OACgYIARAAGAQSNwF-L9IrooQvKJXA4Iro9ZQZeZ43Go_HTwuXf3o5BkP_YQtbwfNkjgilvF0tYGDlrCmu7gKZZH8' })
+  oAuth2Client.setCredentials({ refresh_token: process.env.GMAIL_REFRESH_TOKEN })
 
   try {
     const accessToken = await oAuth2Client.getAccessToken()
@@ -20,16 +18,16 @@ const sendEmail = async(to: string, subject: string, url: string) => {
       service: 'gmail',
       auth: {
         type: 'OAuth2',
-        user: 'duniakodingacademy@gmail.com',
-        clientId: '339838492859-tasrm3s56o7nv6rrnhvjb8hndnctcu6c.apps.googleusercontent.com',
-        clientSecret: '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',
-        refreshToken: '1//04B6mSqm8e4OACgYIARAAGAQSNwF-L9IrooQvKJXA4Iro9ZQZeZ43Go_HTwuXf3o5BkP_YQtbwfNkjgilvF0tYGDlrCmu7gKZZH8',
+        user: `${process.env.MAIL_SENDER_ADDRESS}`,
+        clientId: `${process.env.GOOGLE_CLIENT_ID}`,
+        clientSecret: `${process.env.GOOGLE_CLIENT_SECRET}`,
+        refreshToken: `${process.env.GMAIL_REFRESH_TOKEN}`,
         accessToken
       }
     })
 
     const options = {
-      from: 'duniakodingacademy@gmail.com',
+      from: `${process.env.MAIL_SENDER_ADDRESS}`,
       to,
       subject: `Discussme - ${subject}`,
       html: `

@@ -4,10 +4,11 @@ import cors from 'cors'
 import Redis from 'ioredis'
 import connectRedis from 'connect-redis'
 import session from 'express-session'
+import dotenv from 'dotenv'
 import { ApolloServer } from 'apollo-server-express'
 import { buildSchema } from 'type-graphql'
 import { DataSource } from 'typeorm'
-import { COOKIE_NAME, __prod__ } from './constant'
+import { __prod__ } from './constant'
 import { User } from './entities/User'
 import { Post } from './entities/Post'
 import { UserResolver } from './resolvers/user'
@@ -21,6 +22,8 @@ declare module 'express-session' {
     userId: string
   }
 }
+
+dotenv.config()
 
 const main = async() => {
   const conn = await new DataSource({
@@ -41,13 +44,13 @@ const main = async() => {
   const redisClient = new Redis()
 
   app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: `${process.env.CLIENT_URL}`,
     credentials: true
   }))
 
   app.use(
     session({
-      name: COOKIE_NAME,
+      name: `${process.env.COOKIE_NAME}`,
       store: new RedisStore({
         client: redisClient,
         disableTouch: true
@@ -58,7 +61,7 @@ const main = async() => {
         secure: __prod__,
         sameSite: 'lax'
       },
-      secret: 'XQvnheUkLbeBqvhCjvLQsdPYP7vT9yGCL4bExbcmN5p',
+      secret: `${process.env.SESSION_SECRET}`,
       resave: false,
       saveUninitialized: false
     })
@@ -75,7 +78,7 @@ const main = async() => {
   await apolloServer.start()
   apolloServer.applyMiddleware({ app, cors: false })
 
-  app.listen(5000, () => console.log(`Server is running on PORT 5000.`))
+  app.listen(process.env.PORT, () => console.log(`Server is running on PORT ${process.env.PORT}.`))
 }
 
 main().catch(err => {
