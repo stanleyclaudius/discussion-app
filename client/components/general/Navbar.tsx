@@ -64,29 +64,38 @@ const Navbar = ({ showSearchLogin }: IProps) => {
               </HStack>
             </Link>
           </Box>
-          {
-            !fetching && !currentLoginUserData?.currentLoginUser
-            ? (
-              <>
-                {
-                  showSearchLogin &&
+          <HStack gap={5}>
+            {
+              !fetching && !currentLoginUserData?.currentLoginUser
+              ? (
+                <>
+                  {
+                    showSearchLogin &&
+                    <Box display={{ base: 'block', lg: 'none' }}>
+                      <Button onClick={onOpen} size='sm' colorScheme={buttonBgColor} fontWeight='normal'>Login</Button>
+                    </Box>
+                  }
+                </>
+              )
+              : (
+                <HStack gap={5}>
                   <Box display={{ base: 'block', lg: 'none' }}>
-                    <Button onClick={onOpen} size='sm' colorScheme={buttonBgColor} fontWeight='normal'>Login</Button>
+                    <Text>Hi, {currentLoginUserData?.currentLoginUser?.name}</Text>
                   </Box>
-                }
-              </>
-            )
-            : (
-              <>
-                <Box display={{ base: 'block', lg: 'none' }}>
-                  <Text>Hi, {currentLoginUserData?.currentLoginUser?.name}</Text>
-                </Box>
-                <Box display={{ base: 'block', lg: 'none' }}>
-                  <Button onClick={handleLogout} size='sm' colorScheme={buttonBgColor} fontWeight='normal'>Logout</Button>
-                </Box>
-              </>
-            )
-          }
+                  <Box display={{ base: 'block', lg: 'none' }}>
+                    <Button onClick={handleLogout} size='sm' colorScheme={buttonBgColor} fontWeight='normal'>Logout</Button>
+                  </Box>
+                </HStack>
+              )
+            }
+            <Box onClick={toggleColorMode} display={{ base: 'block', lg: 'none' }}>
+              {
+                isDark
+                ? <BsFillMoonFill fontSize='20px' cursor='pointer' style={{ color: '#ffb543' }} />
+                : <BsFillSunFill fontSize='20px' cursor='pointer' style={{ color: '#65a9ff' }} />
+              }
+            </Box>
+          </HStack>
         </Box>
 
         {
