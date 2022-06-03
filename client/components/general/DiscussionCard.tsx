@@ -1,13 +1,12 @@
 import { useState } from 'react'
+import { toast } from 'react-toastify'
 import { Box, Divider, Heading, HStack, Img, Text, useColorModeValue, useDisclosure, VStack } from '@chakra-ui/react'
 import { AiOutlineArrowUp, AiOutlineEdit, AiOutlineArrowDown } from 'react-icons/ai'
 import { FaTrash } from 'react-icons/fa'
-import { GoComment } from 'react-icons/go'
+import { Post, useCurrentLoginUserQuery, useDeletePostMutation, User, useVoteMutation } from './../../generated/graphql'
 import Link from 'next/link'
 import moment from 'moment'
-import { Post, useCurrentLoginUserQuery, useDeletePostMutation, User, useVoteMutation } from '../../generated/graphql'
-import { toast } from 'react-toastify'
-import PostModal from '../modal/PostModal'
+import PostModal from './../modal/PostModal'
 
 interface IProps {
   post: Post
@@ -20,12 +19,13 @@ export interface ISelectedPost {
 }
 
 const DiscussionCard = ({ post }: IProps) => {
+  const [selectedPost, setSelectedPost] = useState<Partial<ISelectedPost>>({})
+
+  const boxBgColor = useColorModeValue('white', 'gray.900')
+
   const [, vote] = useVoteMutation()
   const [, deletePost] = useDeletePostMutation()
-  const [{data}] = useCurrentLoginUserQuery()
-  const bg = useColorModeValue('white', 'gray.900')
-
-  const [selectedPost, setSelectedPost] = useState<Partial<ISelectedPost>>({})
+  const [{ data: currentLoginUserData }] = useCurrentLoginUserQuery()
 
   const { isOpen, onOpen, onClose } = useDisclosure()
 
@@ -45,7 +45,7 @@ const DiscussionCard = ({ post }: IProps) => {
 
   return (
     <>
-      <HStack alignItems='self-start' boxShadow='0 0 15px rgba(0,0,0,.1)' borderRadius={8} p={7} gap={7} bgColor={bg}>
+      <HStack alignItems='self-start' boxShadow='0 0 15px rgba(0,0,0,.1)' borderRadius={8} p={7} gap={7} bgColor={boxBgColor}>
         <VStack color='gray.500'>
           <Box color={post.voteStatus === 1 ? 'green.300' : undefined} onClick={() => vote({ value: 1, postId: post.id })}>
             <AiOutlineArrowUp fontSize={23} cursor='pointer' />
@@ -81,7 +81,7 @@ const DiscussionCard = ({ post }: IProps) => {
               <Text color='gray.400' fontSize='sm'>{moment(parseInt(post.createdAt)).fromNow()}</Text>
             </HStack>
             {
-              data?.currentLoginUser?.id === post.userId &&
+              currentLoginUserData?.currentLoginUser?.id === post.userId &&
               <HStack gap={3}>
                 <Box onClick={handleUpdatePost} bgColor='orange.400' borderRadius='sm'  p={2} cursor='pointer'>
                   <AiOutlineEdit color='white' />

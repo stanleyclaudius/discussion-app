@@ -2,8 +2,8 @@ import { Box, Divider, HStack, Img, Text, VStack } from '@chakra-ui/react'
 import { AiOutlineArrowDown, AiOutlineArrowUp } from 'react-icons/ai'
 import { FaTrash } from 'react-icons/fa'
 import { toast } from 'react-toastify'
-import { Post, useCurrentLoginUserQuery, useDeletePostMutation, useVoteMutation } from '../../generated/graphql'
-import { formattedDate } from '../../utils/formatter'
+import { formattedDate } from './../../utils/formatter'
+import { Post, useDeletePostMutation, useVoteMutation } from './../../generated/graphql'
 
 interface IProps {
   post: Post
@@ -13,7 +13,6 @@ interface IProps {
 const CommentCard = ({ post, loginUserId }: IProps) => {
   const [, vote] = useVoteMutation()
   const [, deletePost] = useDeletePostMutation()
-  // const [{data}] = useCurrentLoginUserQuery()
   
   const handleDeletePost = () => {
     deletePost({ postId: post.id })

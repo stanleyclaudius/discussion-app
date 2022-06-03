@@ -1,19 +1,26 @@
-import { dedupExchange, fetchExchange, stringifyVariables } from "urql";
-import { CurrentLoginUserDocument, CurrentLoginUserQuery, DeletePostMutationVariables, GetPostRepliesDocument, GetPostRepliesQuery, LoginMutation, LogoutMutation, ReplyPostDocument, ReplyPostMutation, VoteMutationVariables } from "../generated/graphql";
-import { betterUpdateQuery } from "./betterUpdateQuery,";
+import { dedupExchange, fetchExchange, stringifyVariables } from 'urql'
+import {
+  CurrentLoginUserDocument,
+  CurrentLoginUserQuery,
+  DeletePostMutationVariables,
+  LoginMutation,
+  LogoutMutation,
+  VoteMutationVariables
+} from '../generated/graphql'
 import { cacheExchange, Resolver } from '@urql/exchange-graphcache'
+import { betterUpdateQuery } from './betterUpdateQuery'
+import { isServer } from './isServer'
 import gql from 'graphql-tag'
-import { isServer } from "./isServer";
 
 const cursorPagination = (): Resolver => {
   return (_parent, fieldArgs, cache, info) => {
-    const { parentKey: entityKey, fieldName } = info;
+    const { parentKey: entityKey, fieldName } = info
 
-    const allFields = cache.inspectFields(entityKey);
-    const fieldInfos = allFields.filter(info => info.fieldName === fieldName);
-    const size = fieldInfos.length;
+    const allFields = cache.inspectFields(entityKey)
+    const fieldInfos = allFields.filter(info => info.fieldName === fieldName)
+    const size = fieldInfos.length
     if (size === 0) {
-      return undefined;
+      return undefined
     }
 
     const fieldKey = `${fieldName}(${stringifyVariables(fieldArgs)})`
@@ -101,26 +108,26 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
               }
             },
             createPost: (_result, args, cache, info) => {
-              const allFields = cache.inspectFields('Query');
-              const fieldInfos = allFields.filter(info => info.fieldName === 'getPosts');
+              const allFields = cache.inspectFields('Query')
+              const fieldInfos = allFields.filter(info => info.fieldName === 'getPosts')
     
               fieldInfos.forEach(fi => {
                 cache.invalidate('Query', 'getPosts', fi.arguments || {})
               })
             },
             replyPost: (_result, args, cache, info) => {
-              const allFields = cache.inspectFields('Query');
-              const fieldInfos = allFields.filter(info => info.fieldName === 'getPostReplies');
+              const allFields = cache.inspectFields('Query')
+              const fieldInfos = allFields.filter(info => info.fieldName === 'getPostReplies')
 
               fieldInfos.forEach(fi => {
                 cache.invalidate('Query', 'getPostReplies', fi.arguments || {})
               })
             },
             logout: (_result, args, cache, info) => {
-              const allFields = cache.inspectFields('Query');
-              const fieldInfos = allFields.filter(info => info.fieldName === 'getPosts');
-              const postIdFieldInfos = allFields.filter(info => info.fieldName === 'getPostById');
-              const postRepliesFieldInfos = allFields.filter(info => info.fieldName === 'getPostReplies');
+              const allFields = cache.inspectFields('Query')
+              const fieldInfos = allFields.filter(info => info.fieldName === 'getPosts')
+              const postIdFieldInfos = allFields.filter(info => info.fieldName === 'getPostById')
+              const postRepliesFieldInfos = allFields.filter(info => info.fieldName === 'getPostReplies')
     
               fieldInfos.forEach(fi => {
                 cache.invalidate('Query', 'getPosts', fi.arguments || {})
@@ -142,10 +149,10 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
               )
             },
             login: (_result, args, cache, info) => {
-              const allFields = cache.inspectFields('Query');
-              const fieldInfos = allFields.filter(info => info.fieldName === 'getPosts');
-              const postIdFieldInfos = allFields.filter(info => info.fieldName === 'getPostById');
-              const postRepliesFieldInfos = allFields.filter(info => info.fieldName === 'getPostReplies');
+              const allFields = cache.inspectFields('Query')
+              const fieldInfos = allFields.filter(info => info.fieldName === 'getPosts')
+              const postIdFieldInfos = allFields.filter(info => info.fieldName === 'getPostById')
+              const postRepliesFieldInfos = allFields.filter(info => info.fieldName === 'getPostReplies')
     
               fieldInfos.forEach(fi => {
                 cache.invalidate('Query', 'getPosts', fi.arguments || {})

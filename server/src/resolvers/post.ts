@@ -1,8 +1,8 @@
 import { Arg, Ctx, Field, Int, Mutation, ObjectType, Query, Resolver, UseMiddleware } from 'type-graphql'
-import { Post } from '../entities/Post'
-import { Vote } from '../entities/Vote'
-import { isAuth } from '../middlewares/isAuth'
-import { GraphQLContext } from '../types'
+import { Post } from './../entities/Post'
+import { Vote } from './../entities/Vote'
+import { isAuth } from './../middlewares/isAuth'
+import { GraphQLContext } from './../types'
 
 @ObjectType()
 class PaginatedPosts {

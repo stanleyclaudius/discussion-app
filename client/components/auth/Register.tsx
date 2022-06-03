@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { Box, Button, Text, FormControl, FormLabel, Input, ModalBody, ModalFooter, FormErrorMessage } from '@chakra-ui/react'
-import { useRegisterMutation } from '../../generated/graphql'
-import { InputChange } from '../../utils/interface'
 import { toast } from 'react-toastify'
+import { Box, Button, Text, FormControl, FormLabel, Input, ModalBody, ModalFooter, FormErrorMessage } from '@chakra-ui/react'
+import { useRegisterMutation } from './../../generated/graphql'
+import { InputChange } from './../../utils/interface'
 
 interface IProps {
   currScreen: string
@@ -11,7 +11,6 @@ interface IProps {
 }
 
 const Register = ({ currScreen, setCurrScreen, onClose }: IProps) => {
-  const [, register] = useRegisterMutation()
   const [userData, setUserData] = useState({
     name: '',
     email: '',
@@ -22,6 +21,8 @@ const Register = ({ currScreen, setCurrScreen, onClose }: IProps) => {
   const [isEmailInvalid, setIsEmailInvalid] = useState('')
   const [isPasswordInvalid, setIsPasswordInvalid] = useState('')
   const [isPasswordConfirmationInvalid, setIsPasswordConfirmationInvalid] = useState('')
+
+  const [, register] = useRegisterMutation()
 
   const handleChange = (e: InputChange) => {
     const { name, value } = e.target

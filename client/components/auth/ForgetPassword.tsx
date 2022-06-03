@@ -1,16 +1,14 @@
 import { useState } from 'react'
-import { Box, Button, Text, FormControl, FormErrorMessage, FormLabel, Input, ModalBody, ModalFooter } from '@chakra-ui/react'
-import { InputChange } from '../../utils/interface'
-import { useForgotPasswordMutation, useLoginMutation } from '../../generated/graphql'
 import { toast } from 'react-toastify'
+import { Box, Button, Text, FormControl, FormErrorMessage, FormLabel, Input, ModalBody, ModalFooter } from '@chakra-ui/react'
+import { useForgotPasswordMutation } from './../../generated/graphql'
 
 interface IProps {
-  currScreen: string
   setCurrScreen: React.Dispatch<React.SetStateAction<string>>
   onClose: () => void
 }
 
-const Login = ({ currScreen, setCurrScreen, onClose }: IProps) => {
+const ForgetPassword = ({ setCurrScreen, onClose }: IProps) => {
   const [email, setEmail] = useState('')
   const [isEmailInvalid, setIsEmailInvalid] = useState('')
 
@@ -61,4 +59,4 @@ const Login = ({ currScreen, setCurrScreen, onClose }: IProps) => {
   )
 }
  
-export default Login
+export default ForgetPassword

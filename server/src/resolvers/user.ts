@@ -4,8 +4,8 @@ import { User } from './../entities/User'
 import { validateEmail } from './../utils/validator'
 import { COOKIE_NAME } from './../constant'
 import { v4 } from 'uuid'
+import sendEmail from './../utils/sendMail'
 import argon2 from 'argon2'
-import sendEmail from '../utils/sendMail'
 
 @ObjectType()
 class FieldError {

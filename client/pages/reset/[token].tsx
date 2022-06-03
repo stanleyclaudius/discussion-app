@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import { Box, Button, FormControl, FormErrorMessage, FormLabel, Heading, Input, useColorModeValue } from "@chakra-ui/react"
-import { useRouter } from 'next/router'
-import Head from "next/head"
-import Navbar from "../../components/general/Navbar"
-import { useResetPasswordMutation } from '../../generated/graphql'
 import { toast } from 'react-toastify'
 import { withUrqlClient } from 'next-urql'
-import { createUrqlClient } from '../../utils/createUrqlClient'
+import { Box, Button, FormControl, FormErrorMessage, FormLabel, Heading, Input, useColorModeValue } from '@chakra-ui/react'
+import { useRouter } from 'next/router'
+import { useResetPasswordMutation } from './../../generated/graphql'
+import { createUrqlClient } from './../../utils/createUrqlClient'
+import Head from 'next/head'
+import Navbar from './../../components/general/Navbar'
 
 const ResetPassword = () => {
   const router = useRouter()
@@ -19,7 +19,7 @@ const ResetPassword = () => {
 
   const [{fetching}, resetPassword] = useResetPasswordMutation()
 
-  const bg = useColorModeValue('blue', 'orange')
+  const buttonBgColor = useColorModeValue('blue', 'orange')
 
   const handleSubmit = async() => {
     if (!password) {
@@ -72,7 +72,7 @@ const ResetPassword = () => {
             <FormErrorMessage>{isPasswordConfirmationInvalid}</FormErrorMessage>
           </FormControl>
           <Box textAlign='center'>
-            <Button isLoading={fetching} onClick={handleSubmit} colorScheme={bg}>Submit</Button>
+            <Button isLoading={fetching} onClick={handleSubmit} colorScheme={buttonBgColor}>Submit</Button>
           </Box>
         </form>
       </Box>
