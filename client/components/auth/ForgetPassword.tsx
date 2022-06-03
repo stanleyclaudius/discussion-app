@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { toast } from 'react-toastify'
-import { Box, Button, Text, FormControl, FormErrorMessage, FormLabel, Input, ModalBody, ModalFooter } from '@chakra-ui/react'
+import { Box, Button, Text, FormControl, FormErrorMessage, FormLabel, Input, ModalBody, ModalFooter, useColorModeValue } from '@chakra-ui/react'
 import { useForgotPasswordMutation } from './../../generated/graphql'
 
 interface IProps {
@@ -13,6 +13,8 @@ const ForgetPassword = ({ setCurrScreen, onClose }: IProps) => {
   const [isEmailInvalid, setIsEmailInvalid] = useState('')
 
   const [{ fetching }, forgotPassword] = useForgotPasswordMutation()
+
+  const buttonBgColor = useColorModeValue('blue', 'orange')
 
   const handleSubmit = async() => {
     if (!email) {
@@ -49,7 +51,7 @@ const ForgetPassword = ({ setCurrScreen, onClose }: IProps) => {
           Login
         </Text>
         <Box>
-          <Button isLoading={fetching} onClick={handleSubmit} colorScheme='blue' mr={4} fontWeight='normal' fontSize='sm' >
+          <Button isLoading={fetching} onClick={handleSubmit} colorScheme={buttonBgColor} mr={4} fontWeight='normal' fontSize='sm' >
             Submit
           </Button>
           <Button onClick={onClose} fontWeight='normal' fontSize='sm'>Cancel</Button>

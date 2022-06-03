@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { toast } from 'react-toastify'
-import { Box, Button, Text, FormControl, FormErrorMessage, FormLabel, Input, ModalBody, ModalFooter } from '@chakra-ui/react'
+import { Box, Button, Text, FormControl, FormErrorMessage, FormLabel, Input, ModalBody, ModalFooter, useColorModeValue } from '@chakra-ui/react'
 import { InputChange } from './../../utils/interface'
 import { useLoginMutation } from './../../generated/graphql'
 
@@ -19,6 +19,8 @@ const Login = ({ currScreen, setCurrScreen, onClose }: IProps) => {
   const [isPasswordInvalid, setIsPasswordInvalid] = useState('')
 
   const [, login] = useLoginMutation()
+
+  const buttonBgColor = useColorModeValue('blue', 'orange')
 
   const handleChange = (e: InputChange) => {
     const { name, value } = e.target
@@ -71,7 +73,7 @@ const Login = ({ currScreen, setCurrScreen, onClose }: IProps) => {
           {currScreen === 'login' ? 'Register' : 'Login'}
         </Text>
         <Box>
-          <Button onClick={handleSubmit} colorScheme='blue' mr={4} fontWeight='normal' fontSize='sm' >
+          <Button onClick={handleSubmit} colorScheme={buttonBgColor} mr={4} fontWeight='normal' fontSize='sm' >
             Submit
           </Button>
           <Button onClick={onClose} fontWeight='normal' fontSize='sm'>Cancel</Button>

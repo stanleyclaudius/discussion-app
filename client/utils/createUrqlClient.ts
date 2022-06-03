@@ -7,7 +7,7 @@ import {
   LogoutMutation,
   VoteMutationVariables
 } from '../generated/graphql'
-import { cacheExchange, Resolver } from '@urql/exchange-graphcache'
+import { Cache, cacheExchange, Resolver } from '@urql/exchange-graphcache'
 import { betterUpdateQuery } from './betterUpdateQuery'
 import { isServer } from './isServer'
 import gql from 'graphql-tag'
@@ -45,8 +45,17 @@ const cursorPagination = (): Resolver => {
       hasMore,
       posts: results
     }
-  };
-};
+  }
+}
+
+const invalidateCache = (cache: Cache, data: string) => {
+  const allFields = cache.inspectFields('Query')
+  const fieldInfos = allFields.filter(info => info.fieldName === data)
+    
+  fieldInfos.forEach(fi => {
+    cache.invalidate('Query', data, fi.arguments || {})
+  })
+}
 
 export const createUrqlClient = (ssrExchange: any, ctx: any) => {
   let cookie = ''
@@ -108,38 +117,15 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
               }
             },
             createPost: (_result, args, cache, info) => {
-              const allFields = cache.inspectFields('Query')
-              const fieldInfos = allFields.filter(info => info.fieldName === 'getPosts')
-    
-              fieldInfos.forEach(fi => {
-                cache.invalidate('Query', 'getPosts', fi.arguments || {})
-              })
+              invalidateCache(cache, 'getPosts')
             },
             replyPost: (_result, args, cache, info) => {
-              const allFields = cache.inspectFields('Query')
-              const fieldInfos = allFields.filter(info => info.fieldName === 'getPostReplies')
-
-              fieldInfos.forEach(fi => {
-                cache.invalidate('Query', 'getPostReplies', fi.arguments || {})
-              })
+              invalidateCache(cache, 'getPostReplies')
             },
             logout: (_result, args, cache, info) => {
-              const allFields = cache.inspectFields('Query')
-              const fieldInfos = allFields.filter(info => info.fieldName === 'getPosts')
-              const postIdFieldInfos = allFields.filter(info => info.fieldName === 'getPostById')
-              const postRepliesFieldInfos = allFields.filter(info => info.fieldName === 'getPostReplies')
-    
-              fieldInfos.forEach(fi => {
-                cache.invalidate('Query', 'getPosts', fi.arguments || {})
-              })
-
-              postIdFieldInfos.forEach(fi => {
-                cache.invalidate('Query', 'getPostById', fi.arguments || {})
-              })
-
-              postRepliesFieldInfos.forEach(fi => {
-                cache.invalidate('Query', 'getPostReplies', fi.arguments || {})
-              })
+              invalidateCache(cache, 'getPosts')
+              invalidateCache(cache, 'getPostById')
+              invalidateCache(cache, 'getPostReplies')
 
               betterUpdateQuery<LogoutMutation, CurrentLoginUserQuery>(
                 cache,
@@ -149,22 +135,9 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
               )
             },
             login: (_result, args, cache, info) => {
-              const allFields = cache.inspectFields('Query')
-              const fieldInfos = allFields.filter(info => info.fieldName === 'getPosts')
-              const postIdFieldInfos = allFields.filter(info => info.fieldName === 'getPostById')
-              const postRepliesFieldInfos = allFields.filter(info => info.fieldName === 'getPostReplies')
-    
-              fieldInfos.forEach(fi => {
-                cache.invalidate('Query', 'getPosts', fi.arguments || {})
-              })
-
-              postIdFieldInfos.forEach(fi => {
-                cache.invalidate('Query', 'getPostById', fi.arguments || {})
-              })
-
-              postRepliesFieldInfos.forEach(fi => {
-                cache.invalidate('Query', 'getPostReplies', fi.arguments || {})
-              })
+              invalidateCache(cache, 'getPosts')
+              invalidateCache(cache, 'getPostById')
+              invalidateCache(cache, 'getPostReplies')
               
               betterUpdateQuery<LoginMutation, CurrentLoginUserQuery>(
                 cache,

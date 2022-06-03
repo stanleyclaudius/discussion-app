@@ -158,6 +158,8 @@ export type UserResponse = {
 
 export type RegularErrorFragment = { __typename?: 'FieldError', field: string, message: string };
 
+export type RegularPostFragment = { __typename?: 'Post', id: number, title?: string | null, content: string, point: number, userId: number, voteStatus?: number | null, replyTo: number, createdAt: string, updatedAt: string, user: { __typename?: 'User', id: number, name: string, avatar: string, email: string, createdAt: string, updatedAt: string } };
+
 export type RegularUserFragment = { __typename?: 'User', id: number, name: string, avatar: string, email: string, createdAt: string, updatedAt: string };
 
 export type RegularUserResponseFragment = { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, user?: { __typename?: 'User', id: number, name: string, avatar: string, email: string, createdAt: string, updatedAt: string } | null };
@@ -250,7 +252,7 @@ export type GetPostByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetPostByIdQuery = { __typename?: 'Query', getPostById?: { __typename?: 'Post', id: number, title?: string | null, content: string, point: number, userId: number, voteStatus?: number | null, createdAt: string, updatedAt: string, user: { __typename?: 'User', id: number, name: string, avatar: string, email: string, createdAt: string, updatedAt: string } } | null };
+export type GetPostByIdQuery = { __typename?: 'Query', getPostById?: { __typename?: 'Post', id: number, title?: string | null, content: string, point: number, userId: number, voteStatus?: number | null, replyTo: number, createdAt: string, updatedAt: string, user: { __typename?: 'User', id: number, name: string, avatar: string, email: string, createdAt: string, updatedAt: string } } | null };
 
 export type GetPostRepliesQueryVariables = Exact<{
   postId: Scalars['Int'];
@@ -274,6 +276,27 @@ export type SearchPostQueryVariables = Exact<{
 
 export type SearchPostQuery = { __typename?: 'Query', searchPost: Array<{ __typename?: 'Post', id: number, title?: string | null, content: string, createdAt: string, updatedAt: string, user: { __typename?: 'User', id: number, name: string, avatar: string } }> };
 
+export const RegularPostFragmentDoc = gql`
+    fragment RegularPost on Post {
+  id
+  title
+  content
+  point
+  userId
+  voteStatus
+  replyTo
+  user {
+    id
+    name
+    avatar
+    email
+    createdAt
+    updatedAt
+  }
+  createdAt
+  updatedAt
+}
+    `;
 export const RegularErrorFragmentDoc = gql`
     fragment RegularError on FieldError {
   field
@@ -432,25 +455,10 @@ export function useCurrentLoginUserQuery(options?: Omit<Urql.UseQueryArgs<Curren
 export const GetPostByIdDocument = gql`
     query GetPostById($id: Int!) {
   getPostById(id: $id) {
-    id
-    title
-    content
-    point
-    userId
-    voteStatus
-    user {
-      id
-      name
-      avatar
-      email
-      createdAt
-      updatedAt
-    }
-    createdAt
-    updatedAt
+    ...RegularPost
   }
 }
-    `;
+    ${RegularPostFragmentDoc}`;
 
 export function useGetPostByIdQuery(options: Omit<Urql.UseQueryArgs<GetPostByIdQueryVariables>, 'query'>) {
   return Urql.useQuery<GetPostByIdQuery>({ query: GetPostByIdDocument, ...options });
@@ -458,26 +466,10 @@ export function useGetPostByIdQuery(options: Omit<Urql.UseQueryArgs<GetPostByIdQ
 export const GetPostRepliesDocument = gql`
     query GetPostReplies($postId: Int!) {
   getPostReplies(postId: $postId) {
-    id
-    title
-    content
-    point
-    userId
-    voteStatus
-    replyTo
-    user {
-      id
-      name
-      avatar
-      email
-      createdAt
-      updatedAt
-    }
-    createdAt
-    updatedAt
+    ...RegularPost
   }
 }
-    `;
+    ${RegularPostFragmentDoc}`;
 
 export function useGetPostRepliesQuery(options: Omit<Urql.UseQueryArgs<GetPostRepliesQueryVariables>, 'query'>) {
   return Urql.useQuery<GetPostRepliesQuery>({ query: GetPostRepliesDocument, ...options });
@@ -487,27 +479,11 @@ export const GetPostsDocument = gql`
   getPosts(limit: $limit, cursor: $cursor) {
     hasMore
     posts {
-      id
-      title
-      content
-      point
-      userId
-      voteStatus
-      replyTo
-      user {
-        id
-        name
-        avatar
-        email
-        createdAt
-        updatedAt
-      }
-      createdAt
-      updatedAt
+      ...RegularPost
     }
   }
 }
-    `;
+    ${RegularPostFragmentDoc}`;
 
 export function useGetPostsQuery(options: Omit<Urql.UseQueryArgs<GetPostsQueryVariables>, 'query'>) {
   return Urql.useQuery<GetPostsQuery>({ query: GetPostsDocument, ...options });

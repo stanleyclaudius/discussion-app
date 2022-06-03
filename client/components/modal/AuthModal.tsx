@@ -41,7 +41,7 @@ const AuthModal = ({ isOpen, onClose }: IProps) => {
           currScreen === 'login'
           ? <Login currScreen={currScreen} setCurrScreen={setCurrScreen} onClose={onClose} />
           : currScreen === 'forget'
-            ? <ForgetPassword currScreen={currScreen} setCurrScreen={setCurrScreen} onClose={onClose} />
+            ? <ForgetPassword setCurrScreen={setCurrScreen} onClose={onClose} />
             : <Register currScreen={currScreen} setCurrScreen={setCurrScreen} onClose={onClose} />
         }
       </ModalContent>
