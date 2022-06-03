@@ -61,17 +61,6 @@ const DiscussionCard = ({ post }: IProps) => {
               <Link href={`/discussion/${post.id}`}>
                 <Heading cursor='pointer' as='h3' size='md'>{post.title}</Heading>
               </Link>
-              {
-                data?.currentLoginUser?.id === post.userId &&
-                <HStack gap={3}>
-                  <Box onClick={handleUpdatePost} bgColor='orange.400' borderRadius='sm'  p={2} cursor='pointer'>
-                    <AiOutlineEdit color='white' />
-                  </Box>
-                  <Box onClick={handleDeletePost} bgColor='red.500' borderRadius='sm' p={2} cursor='pointer'>
-                    <FaTrash color='white' />
-                  </Box>
-                </HStack>
-              }
             </HStack>
             <Text my={4} color='gray.500' fontSize={14} lineHeight='6'>
               {post.content}
@@ -91,10 +80,17 @@ const DiscussionCard = ({ post }: IProps) => {
               </HStack>
               <Text color='gray.400' fontSize='sm'>{moment(parseInt(post.createdAt)).fromNow()}</Text>
             </HStack>
-            <HStack color='gray.500'>
-              <GoComment />
-              <Text fontSize='sm'>50+</Text>
-            </HStack>
+            {
+              data?.currentLoginUser?.id === post.userId &&
+              <HStack gap={3}>
+                <Box onClick={handleUpdatePost} bgColor='orange.400' borderRadius='sm'  p={2} cursor='pointer'>
+                  <AiOutlineEdit color='white' />
+                </Box>
+                <Box onClick={handleDeletePost} bgColor='red.500' borderRadius='sm' p={2} cursor='pointer'>
+                  <FaTrash color='white' />
+                </Box>
+              </HStack>
+            }
           </HStack>
         </Box>
       </HStack>

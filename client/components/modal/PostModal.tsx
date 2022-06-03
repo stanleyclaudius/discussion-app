@@ -12,7 +12,8 @@ import {
   FormLabel,
   Input,
   Textarea,
-  FormErrorMessage
+  FormErrorMessage,
+  useColorModeValue
 } from '@chakra-ui/react'
 import { useCreatePostMutation, useUpdatePostMutation } from '../../generated/graphql'
 import { InputChange } from '../../utils/interface'
@@ -31,6 +32,8 @@ const PostModal = ({ isOpen, onClose, selectedPost }: IProps) => {
 
   const initialRef = useRef() as RefObject<HTMLElement>
   const finalRef = useRef() as RefObject<HTMLElement>
+
+  const bg = useColorModeValue('blue', 'orange')
 
   const [postData, setPostData] = useState({
     title: '',
@@ -122,7 +125,7 @@ const PostModal = ({ isOpen, onClose, selectedPost }: IProps) => {
           </form>
         </ModalBody>
         <ModalFooter>
-          <Button onClick={handleSubmit} colorScheme='blue' mr={4} fontWeight='normal' fontSize='sm'>
+          <Button onClick={handleSubmit} colorScheme={bg} mr={4} fontWeight='normal' fontSize='sm'>
             Save
           </Button>
           <Button onClick={onClose} fontWeight='normal' fontSize='sm'>Cancel</Button>

@@ -11,7 +11,8 @@ import {
   FormControl,
   FormLabel,
   Textarea,
-  FormErrorMessage
+  FormErrorMessage,
+  useColorModeValue
 } from '@chakra-ui/react'
 import { useReplyPostMutation } from '../../generated/graphql'
 import { toast } from 'react-toastify'
@@ -30,6 +31,8 @@ const CommentModal = ({ isOpen, onClose, postId }: IProps) => {
   const finalRef = useRef() as RefObject<HTMLElement>
 
   const [, replyPost] = useReplyPostMutation()
+
+  const bg = useColorModeValue('blue', 'orange')
 
   const handleSubmit = async() => {
     if (!content) {
@@ -61,7 +64,7 @@ const CommentModal = ({ isOpen, onClose, postId }: IProps) => {
           </FormControl>
         </ModalBody>
         <ModalFooter>
-          <Button onClick={handleSubmit} colorScheme='blue' mr={4} fontWeight='normal' fontSize='sm'>
+          <Button onClick={handleSubmit} colorScheme={bg} mr={4} fontWeight='normal' fontSize='sm'>
             Save
           </Button>
           <Button onClick={onClose} fontWeight='normal' fontSize='sm'>Cancel</Button>
