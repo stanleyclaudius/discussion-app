@@ -9,13 +9,11 @@ import { ApolloServer } from 'apollo-server-express'
 import { buildSchema } from 'type-graphql'
 import { DataSource } from 'typeorm'
 import { __prod__ } from './constant'
-import { User } from './entities/User'
-import { Post } from './entities/Post'
 import { UserResolver } from './resolvers/user'
 import { PostResolver } from './resolvers/post'
-import { Vote } from './entities/Vote'
 import { createUserLoader } from './utils/createUserLoader'
 import { createVoteLoader } from './utils/createVoteLoader'
+import { dataSourceObj } from './utils/dataSourceObj'
 
 declare module 'express-session' {
   export interface SessionData {
@@ -26,22 +24,18 @@ declare module 'express-session' {
 dotenv.config()
 
 const main = async() => {
-  const conn = await new DataSource({
-    type: 'postgres',
-    database: 'discussme',
-    username: 'postgres',
-    password: 'root',
-    logging: true,
-    synchronize: true,
-    entities: [User, Post, Vote]
-  })
+  const conn = await new DataSource(dataSourceObj(__prod__))
 
   conn.initialize()
 
   const app = express()
 
   const RedisStore = connectRedis(session)
-  const redisClient = new Redis()
+  const redisClient = new Redis({
+    host: process.env.REDIS_HOSTNAME,
+    port: parseInt(process.env.REDIS_PORT!),
+    password: process.env.REDIS_PASSWORD
+  })
 
   app.use(cors({
     origin: `${process.env.CLIENT_URL}`,
