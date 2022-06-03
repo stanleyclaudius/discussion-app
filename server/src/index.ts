@@ -13,6 +13,8 @@ import { Post } from './entities/Post'
 import { UserResolver } from './resolvers/user'
 import { PostResolver } from './resolvers/post'
 import { Vote } from './entities/Vote'
+import { createUserLoader } from './utils/createUserLoader'
+import { createVoteLoader } from './utils/createVoteLoader'
 
 declare module 'express-session' {
   export interface SessionData {
@@ -67,7 +69,7 @@ const main = async() => {
       resolvers: [UserResolver, PostResolver],
       validate: false
     }),
-    context: ({ req, res }) => ({ req, res, conn, redis: redisClient })
+    context: ({ req, res }) => ({ req, res, conn, redis: redisClient, userLoader: createUserLoader(), voteLoader: createVoteLoader() })
   })
 
   await apolloServer.start()

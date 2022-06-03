@@ -1,4 +1,5 @@
-import { Arg, Ctx, Field, Int, Mutation, ObjectType, Query, Resolver, UseMiddleware } from 'type-graphql'
+import { Arg, Ctx, Field, FieldResolver, Int, Mutation, ObjectType, Query, Resolver, Root, UseMiddleware } from 'type-graphql'
+import { User } from '../entities/User'
 import { Post } from './../entities/Post'
 import { Vote } from './../entities/Vote'
 import { isAuth } from './../middlewares/isAuth'
@@ -15,6 +16,30 @@ class PaginatedPosts {
 
 @Resolver(Post)
 export class PostResolver {
+  @FieldResolver(() => User)
+  user(
+    @Root() post: Post,
+    @Ctx() { userLoader }: GraphQLContext
+  ) {
+    return userLoader.load(post.userId)
+  }
+
+  @FieldResolver(() => Int, { nullable: true })
+  async voteStatus(
+    @Root() post: Post,
+    @Ctx() { voteLoader, req }: GraphQLContext
+  ) {
+    if (!req.session.userId)
+      return null
+    
+    const vote = await voteLoader.load({
+      postId: post.id,
+      userId: parseInt(req.session.userId)
+    })
+
+    return vote ? vote.value : null
+  }
+
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
   async vote(
@@ -102,24 +127,15 @@ export class PostResolver {
 
     const replacements: any[] = [realLimitPlusOne]
 
-    if (req.session.userId) {
-      replacements.push(req.session.userId)
-    }
-
-    let cursorIdx = 3
     if (cursor) {
       replacements.push(new Date(parseInt(cursor)))
-      cursorIdx = replacements.length
     }
-    
+
     const posts = await conn.query(
       `
-        SELECT p.*,
-        json_build_object('id', u.id, 'name', u.name, 'avatar', u.avatar, 'email', u.email, 'createdAt', u."createdAt", 'updatedAt', u."updatedAt") user,
-        ${req.session.userId ? '(SELECT value FROM vote WHERE "userId" = $2 AND "postId" = p.id) "voteStatus"' : 'null as "voteStatus"'}
-        FROM post p INNER JOIN public.user u
-        ON u.id = p."userId"
-        ${cursor ? `WHERE p."createdAt" < $${cursorIdx} AND p."replyTo" = -1` : 'WHERE p."replyTo" = -1'}
+        SELECT p.*
+        FROM post p
+        ${cursor ? `WHERE p."createdAt" < $2 AND p."replyTo" = -1` : 'WHERE p."replyTo" = -1'}
         ORDER BY p."createdAt" DESC
         LIMIT $1
       `
@@ -138,17 +154,10 @@ export class PostResolver {
   ) {
     const replacements: any[] = [id]
 
-    if (req.session.userId) {
-      replacements.push(req.session.userId)
-    }
-
     const post = await conn.query(
       `
-        SELECT p.*,
-        json_build_object('id', u.id, 'name', u.name, 'avatar', u.avatar, 'email', u.email, 'createdAt', u."createdAt", 'updatedAt', u."updatedAt") user,
-        ${req.session.userId ? '(SELECT value FROM vote WHERE "userId" = $2 AND "postId" = p.id) "voteStatus"' : 'null as "voteStatus"'}
-        FROM post p INNER JOIN public.user u
-        ON u.id = p."userId"
+        SELECT p.*
+        FROM post p
         WHERE p.id = $1
       `
     , replacements)
@@ -186,17 +195,10 @@ export class PostResolver {
   ) {
     const replacements: any[] = [postId]
 
-    if (req.session.userId) {
-      replacements.push(req.session.userId)
-    }
-
     const posts = await conn.query(
       `
-        SELECT p.*,
-        json_build_object('id', u.id, 'name', u.name, 'avatar', u.avatar, 'email', u.email, 'createdAt', u."createdAt", 'updatedAt', u."updatedAt") user,
-        ${req.session.userId ? '(SELECT value FROM vote WHERE "userId" = $2 AND "postId" = p.id) "voteStatus"' : 'null as "voteStatus"'}
-        FROM post p INNER JOIN public.user u
-        ON u.id = p."userId"
+        SELECT p.*
+        FROM post p
         WHERE "replyTo" = $1
         ORDER BY p."createdAt" DESC
       `
@@ -239,10 +241,8 @@ export class PostResolver {
     @Ctx() { conn }: GraphQLContext
   ) {
     const posts = await conn.query(`
-      SELECT p.*,
-      json_build_object('id', u.id, 'name', u.name, 'avatar', u.avatar, 'email', u.email, 'createdAt', u."createdAt", 'updatedAt', u."updatedAt") user
-      FROM post p INNER JOIN public.user u
-      ON u.id = p."userId"
+      SELECT p.*
+      FROM post p
       WHERE title LIKE '%${keyword}%'
       ORDER BY p."createdAt" DESC
     `)

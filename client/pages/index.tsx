@@ -29,7 +29,7 @@ const Home = () => {
       <Head>
         <title>Discussme | Home</title>
       </Head>
-      <Navbar />
+      <Navbar showSearchLogin={true} />
       <Box py={10} px={{ base: 8, lg: 40 }}>
         {
           (!currentLoginUserFetching && currentLoginUserData?.currentLoginUser) &&

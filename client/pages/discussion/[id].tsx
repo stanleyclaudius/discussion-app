@@ -43,7 +43,7 @@ const DiscussionDetail = () => {
       <Head>
         <title>Discussme | {postData?.getPostById?.title}</title>
       </Head>
-      <Navbar />
+      <Navbar showSearchLogin={true} />
       <Box py={14} px={{ base: 8, lg: 40 }}>
         <HStack justifyContent='space-between' mb={9}>
           <HStack gap={3}>

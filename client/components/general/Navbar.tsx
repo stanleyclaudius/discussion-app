@@ -6,10 +6,16 @@ import { AiOutlineSearch } from 'react-icons/ai'
 import { BsFillMoonFill, BsFillSunFill } from 'react-icons/bs'
 import { useCurrentLoginUserQuery, useLogoutMutation, useSearchPostQuery } from './../../generated/graphql'
 import { formattedDate } from './../../utils/formatter'
+import Logo from './../../images/logo.png'
 import Link from 'next/link'
 import AuthModal from './../modal/AuthModal'
+import Image from 'next/image'
 
-const Navbar = () => {
+interface IProps {
+  showSearchLogin: boolean
+}
+
+const Navbar = ({ showSearchLogin }: IProps) => {
   const router = useRouter()
 
   const [keyword, setKeyword] = useState('')
@@ -52,15 +58,23 @@ const Navbar = () => {
         <Box display='flex' justifyContent='space-between' w={{ base: '100%', lg: 'auto' }}>
           <Box>
             <Link href='/'>
-              <Heading as='h2' size='md' cursor='pointer' fontWeight='normal'>Discussme</Heading>
+              <HStack gap={4} cursor='pointer'>
+                <Image src={Logo} alt='Discussme' />
+                <Heading as='h2' size='md' fontWeight='normal'>Discussme</Heading>
+              </HStack>
             </Link>
           </Box>
           {
             !fetching && !currentLoginUserData?.currentLoginUser
             ? (
-              <Box display={{ base: 'block', lg: 'none' }}>
-                <Button onClick={onOpen} size='sm' colorScheme={buttonBgColor} fontWeight='normal'>Login</Button>
-              </Box>
+              <>
+                {
+                  showSearchLogin &&
+                  <Box display={{ base: 'block', lg: 'none' }}>
+                    <Button onClick={onOpen} size='sm' colorScheme={buttonBgColor} fontWeight='normal'>Login</Button>
+                  </Box>
+                }
+              </>
             )
             : (
               <>
@@ -74,45 +88,55 @@ const Navbar = () => {
             )
           }
         </Box>
-        <Box flex={1} w='100%' position='relative'>
-          <InputGroup bgColor={searchBgColor} borderRadius={6}>
-            <InputLeftElement pointerEvents='none' children={<AiOutlineSearch color='gray.300' />} />
-            <Input placeholder='Search for Topics' fontSize='sm' value={keyword} onChange={e => setKeyword(e.target.value)} />
-          </InputGroup>
-          {
-            searchResult.length > 0 &&
-            <Box position='absolute' top='100%' mt={4} boxShadow='0 0 5px rgba(0,0,0,.3)' w='full' bg={searchResultBgColor} borderRadius={6} px={5} pt={5} zIndex={999}>
-              {
-                searchResult.map((item: any) => (
-                  <Box mb={8} pb={5} borderBottom='1px solid #ccc'>
-                    <Box onClick={() => handleClickSearchResult(item.id)}>
-                      <Heading size='md' cursor='pointer' w='fit-content'>{item.title}</Heading>
-                    </Box>
-                    <HStack alignItems='center' justifyContent='space-between'>
-                      <HStack fontSize='sm' gap={2} mt={3}>
-                        <Text color='gray.400'>Posted by</Text>
-                        <Text color='blue.600'>{item.user.name}</Text>
-                      </HStack>
-                      <Text fontSize={14}>{formattedDate(item.createdAt)}</Text>
-                    </HStack>
-                  </Box>
-                ))
-              }
-            </Box>
-          }
 
-          {
-            (searchResult.length === 0 && keyword.length > 3) &&
-            <Box position='absolute' top='100%' mt={4} boxShadow='0 0 5px rgba(0,0,0,.3)' w='full' bg={searchResultBgColor} borderRadius={6} p={5} zIndex={999}>
-              <Text color='red.400' fontWeight='medium' textAlign='center'>Post with keyword "{keyword}" not found</Text>
-            </Box>
-          }
-        </Box>
+        {
+          showSearchLogin &&
+          <Box flex={1} w='100%' position='relative'>
+            <InputGroup bgColor={searchBgColor} borderRadius={6}>
+              <InputLeftElement pointerEvents='none' children={<AiOutlineSearch color='gray.300' />} />
+              <Input placeholder='Search for Topics' fontSize='sm' value={keyword} onChange={e => setKeyword(e.target.value)} />
+            </InputGroup>
+            {
+              searchResult.length > 0 &&
+              <Box position='absolute' top='100%' mt={4} boxShadow='0 0 5px rgba(0,0,0,.3)' w='full' bg={searchResultBgColor} borderRadius={6} px={5} pt={5} zIndex={999}>
+                {
+                  searchResult.map((item: any) => (
+                    <Box mb={8} pb={5} borderBottom='1px solid #ccc'>
+                      <Box onClick={() => handleClickSearchResult(item.id)}>
+                        <Heading size='md' cursor='pointer' w='fit-content'>{item.title}</Heading>
+                      </Box>
+                      <HStack alignItems='center' justifyContent='space-between'>
+                        <HStack fontSize='sm' gap={2} mt={3}>
+                          <Text color='gray.400'>Posted by</Text>
+                          <Text color='blue.600'>{item.user.name}</Text>
+                        </HStack>
+                        <Text fontSize={14}>{formattedDate(item.createdAt)}</Text>
+                      </HStack>
+                    </Box>
+                  ))
+                }
+              </Box>
+            }
+
+            {
+              (searchResult.length === 0 && keyword.length > 3) &&
+              <Box position='absolute' top='100%' mt={4} boxShadow='0 0 5px rgba(0,0,0,.3)' w='full' bg={searchResultBgColor} borderRadius={6} p={5} zIndex={999}>
+                <Text color='red.400' fontWeight='medium' textAlign='center'>Post with keyword "{keyword}" not found</Text>
+              </Box>
+            }
+          </Box>
+        }
+        
         <Box display={{ base: 'none', lg: 'flex' }} alignItems='center' gap={8}>
           {
             !fetching && !currentLoginUserData?.currentLoginUser
             ? (
-              <Button onClick={onOpen} size='sm' colorScheme={buttonBgColor} fontWeight='normal'>Login</Button>
+              <>
+                {
+                  showSearchLogin &&
+                  <Button onClick={onOpen} size='sm' colorScheme={buttonBgColor} fontWeight='normal'>Login</Button>
+                }
+              </>
             )
             : (
               <>

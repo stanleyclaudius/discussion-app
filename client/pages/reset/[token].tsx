@@ -57,7 +57,7 @@ const ResetPassword = () => {
       <Head>
         <title>Discussme | Reset Password</title>
       </Head>
-      <Navbar />
+      <Navbar showSearchLogin={false} />
       <Box w='100%' maxW='600px' mx='auto' mt={10} borderRadius={5} px={10}>
         <Heading fontSize='25px' textAlign='center' mb={8}>Reset Password</Heading>
         <form>
