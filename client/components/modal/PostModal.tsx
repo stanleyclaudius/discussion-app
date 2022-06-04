@@ -27,8 +27,8 @@ interface IProps {
 }
 
 const PostModal = ({ isOpen, onClose, selectedPost }: IProps) => {
-  const [, createPost] = useCreatePostMutation()
-  const [, updatePost] = useUpdatePostMutation()
+  const [{ fetching: createFetching }, createPost] = useCreatePostMutation()
+  const [{ fetching: updateFetching }, updatePost] = useUpdatePostMutation()
 
   const initialRef = useRef() as RefObject<HTMLElement>
   const finalRef = useRef() as RefObject<HTMLElement>
@@ -125,7 +125,7 @@ const PostModal = ({ isOpen, onClose, selectedPost }: IProps) => {
           </form>
         </ModalBody>
         <ModalFooter>
-          <Button onClick={handleSubmit} colorScheme={bg} mr={4} fontWeight='normal' fontSize='sm'>
+          <Button isLoading={createFetching || updateFetching} onClick={handleSubmit} colorScheme={bg} mr={4} fontWeight='normal' fontSize='sm'>
             Save
           </Button>
           <Button onClick={onClose} fontWeight='normal' fontSize='sm'>Cancel</Button>

@@ -18,7 +18,7 @@ const Login = ({ currScreen, setCurrScreen, onClose }: IProps) => {
   const [isEmailInvalid, setIsEmailInvalid] = useState('')
   const [isPasswordInvalid, setIsPasswordInvalid] = useState('')
 
-  const [, login] = useLoginMutation()
+  const [{ fetching }, login] = useLoginMutation()
 
   const buttonBgColor = useColorModeValue('blue', 'orange')
 
@@ -73,7 +73,7 @@ const Login = ({ currScreen, setCurrScreen, onClose }: IProps) => {
           {currScreen === 'login' ? 'Register' : 'Login'}
         </Text>
         <Box>
-          <Button onClick={handleSubmit} colorScheme={buttonBgColor} mr={4} fontWeight='normal' fontSize='sm' >
+          <Button isLoading={fetching} onClick={handleSubmit} colorScheme={buttonBgColor} mr={4} fontWeight='normal' fontSize='sm' >
             Submit
           </Button>
           <Button onClick={onClose} fontWeight='normal' fontSize='sm'>Cancel</Button>

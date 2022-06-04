@@ -30,7 +30,7 @@ const CommentModal = ({ isOpen, onClose, postId }: IProps) => {
   const initialRef = useRef() as RefObject<HTMLElement>
   const finalRef = useRef() as RefObject<HTMLElement>
 
-  const [, replyPost] = useReplyPostMutation()
+  const [{ fetching }, replyPost] = useReplyPostMutation()
 
   const bg = useColorModeValue('blue', 'orange')
 
@@ -64,7 +64,7 @@ const CommentModal = ({ isOpen, onClose, postId }: IProps) => {
           </FormControl>
         </ModalBody>
         <ModalFooter>
-          <Button onClick={handleSubmit} colorScheme={bg} mr={4} fontWeight='normal' fontSize='sm'>
+          <Button isLoading={fetching} onClick={handleSubmit} colorScheme={bg} mr={4} fontWeight='normal' fontSize='sm'>
             Save
           </Button>
           <Button onClick={onClose} fontWeight='normal' fontSize='sm'>Cancel</Button>
