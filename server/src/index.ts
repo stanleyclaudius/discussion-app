@@ -37,6 +37,8 @@ const main = async() => {
     password: process.env.REDIS_PASSWORD
   })
 
+  app.set('trust proxy', 1)
+
   app.use(cors({
     origin: `${process.env.CLIENT_URL}`,
     credentials: true
