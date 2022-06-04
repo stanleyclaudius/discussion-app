@@ -102,7 +102,9 @@ const Navbar = ({ showSearchLogin }: IProps) => {
           showSearchLogin &&
           <Box flex={1} w='100%' position='relative'>
             <InputGroup bgColor={searchBgColor} borderRadius={6}>
-              <InputLeftElement pointerEvents='none' children={<AiOutlineSearch color='gray.300' />} />
+              <InputLeftElement pointerEvents='none'>
+                <AiOutlineSearch color='gray.300' />
+              </InputLeftElement>
               <Input placeholder='Search for Topics' fontSize='sm' value={keyword} onChange={e => setKeyword(e.target.value)} />
             </InputGroup>
             {
@@ -110,7 +112,7 @@ const Navbar = ({ showSearchLogin }: IProps) => {
               <Box position='absolute' top='100%' mt={4} boxShadow='0 0 5px rgba(0,0,0,.3)' w='full' bg={searchResultBgColor} borderRadius={6} px={5} pt={5} zIndex={999}>
                 {
                   searchResult.map((item: any) => (
-                    <Box mb={8} pb={5} borderBottom='1px solid #ccc'>
+                    <Box key={item.id} mb={8} pb={5} borderBottom='1px solid #ccc'>
                       <Box onClick={() => handleClickSearchResult(item.id)}>
                         <Heading size='md' cursor='pointer' w='fit-content'>{item.title}</Heading>
                       </Box>
@@ -130,7 +132,7 @@ const Navbar = ({ showSearchLogin }: IProps) => {
             {
               (searchResult.length === 0 && keyword.length > 3) &&
               <Box position='absolute' top='100%' mt={4} boxShadow='0 0 5px rgba(0,0,0,.3)' w='full' bg={searchResultBgColor} borderRadius={6} p={5} zIndex={999}>
-                <Text color='red.400' fontWeight='medium' textAlign='center'>Post with keyword "{keyword}" not found</Text>
+                <Text color='red.400' fontWeight='medium' textAlign='center'>Post with keyword &quot;{keyword}&quot; not found</Text>
               </Box>
             }
           </Box>
