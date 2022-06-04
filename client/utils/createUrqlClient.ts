@@ -64,7 +64,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
   }
 
   return {
-    url: 'http://localhost:5000/graphql',
+    url: 'https://discussme-server.herokuapp.com/graphql',
     fetchOptions: {
       credentials: 'include' as const,
       headers: cookie ? { cookie } : undefined
