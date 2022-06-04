@@ -50,7 +50,7 @@ const Navbar = ({ showSearchLogin }: IProps) => {
     }
 
     return () => setSearchResult([])
-  }, [keyword])
+  }, [keyword, searchData?.searchPost])
 
   return (
     <>
