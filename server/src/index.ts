@@ -56,7 +56,7 @@ const main = async() => {
         httpOnly: true,
         secure: __prod__,
         sameSite: 'none',
-        domain: '.herokuapp.com'
+        domain: 'herokuapp.com'
       },
       secret: `${process.env.SESSION_SECRET}`,
       resave: false,
