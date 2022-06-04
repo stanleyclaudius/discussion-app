@@ -55,7 +55,7 @@ const main = async() => {
         maxAge: 1000 * 60 * 60 * 24 * 365 * 10,
         httpOnly: true,
         secure: __prod__,
-        domain: '.herokuapp.com',
+        domain: __prod__ ? '.vercel.app' : undefined,
         sameSite: 'lax'
       },
       secret: `${process.env.SESSION_SECRET}`,
