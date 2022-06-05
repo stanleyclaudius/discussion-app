@@ -129,7 +129,7 @@ Rename ```.env.example``` file at ```server``` directory become ```.env```, then
     | REDIS_PORT | Your redis port number | 19233 |
     | REDIS_PASSWORD | Your redis password | eU82829djjfkxxx |
 6. Create a database with name corresponding to your `DB_NAME` value at .env file
-7. Change directory to client folder, and rename ```constant.example.ts``` file to ```constant.ts```, then fill your ```SERVER_URL``` (e.g. http://localhost:5000)
+7. Change directory to client folder, and change your ```SERVER_URL``` (e.g. http://localhost:5000) at ```constant.js``` file
 8. Lastly, spin off the application by running 2 terminal at the same time, with commands such as bellow:
     ```
     cd server && yarn dev-ts
