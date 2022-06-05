@@ -10,7 +10,7 @@ import Navbar from './../components/general/Navbar'
 import PostModal from './../components/modal/PostModal'
 
 const Home = () => {
-  const [variables, setVariables] = useState({ limit: 2, cursor: null as null | string })
+  const [variables, setVariables] = useState({ limit: 15, cursor: null as null | string })
 
   const [{ data: currentLoginUserData, fetching: currentLoginUserFetching }] = useCurrentLoginUserQuery()
   const [{ data: postsData, fetching: postsFetching }] = useGetPostsQuery({ variables })
