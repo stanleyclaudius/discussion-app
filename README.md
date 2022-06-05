@@ -105,9 +105,12 @@ Below steps will guide you through the local installation process of this applic
    git clone https://github.com/stanleyclaudius/discussion-app.git
    ```
 4. Install project dependency<br />
-Make sure that your terminal pointing at the root directory of this project (discussion-app folder).
+Make sure that your terminal pointing at the root directory of this project (discussion-app folder). And you can open up 2 terminal to run below commands:
    ```
-   cd server && yarn install && cd client && yarn install
+   cd server && yarn install
+   ```
+   ```
+   cd client && yarn install
    ```
 5. Complete the .env variable<br/>
 Rename ```.env.example``` file at ```server``` directory become ```.env```, then fill the value for every key. Below is the guideline for filling the .env value:<br/>
