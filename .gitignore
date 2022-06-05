@@ -25,4 +25,4 @@ yarn-error.log*
 
 /server/.env
 
-constant.ts
+# constant.ts
