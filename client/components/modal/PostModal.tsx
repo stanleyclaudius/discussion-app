@@ -63,14 +63,14 @@ const PostModal = ({ isOpen, onClose, selectedPost }: IProps) => {
 
     if (postData.title && postData.content) {
       if (selectedPost) {
-        updatePost({
+        await updatePost({
           postId: selectedPost.id,
           title: postData.title,
           content: postData.content
         })
         toast.success(`Post has been updated successfully.`)
       } else {
-        createPost(postData)
+        await createPost(postData)
         toast.success(`Post with title ${postData.title} has been created successfully.`)
       }
       setPostData({

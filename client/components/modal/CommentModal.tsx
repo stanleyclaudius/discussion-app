@@ -40,7 +40,7 @@ const CommentModal = ({ isOpen, onClose, postId }: IProps) => {
       return
     }
 
-    replyPost({ content, postId })
+    await replyPost({ content, postId })
     toast.success('Comment posted.')
     onClose()
   }
