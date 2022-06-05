@@ -1,4 +1,7 @@
 import { DataSourceOptions } from 'typeorm'
+import { Post } from './../entities/Post'
+import { User } from './../entities/User'
+import { Vote } from './../entities/Vote'
 
 export const dataSourceObj = (isProd: boolean) => {
   let obj: Partial<DataSourceOptions> = {}
@@ -6,7 +9,7 @@ export const dataSourceObj = (isProd: boolean) => {
   if (isProd) {
     obj = {
       type: 'postgres',
-      url: 'postgres://ndkcuqutilrygl:8a6d9e49f804f82c2808608af08f286ae7442746d8ffda5aa2be46dadfdd74c9@ec2-54-164-40-66.compute-1.amazonaws.com:5432/dekp5mefddotro',
+      url: process.env.DATABASE_URL,
       logging: true,
       migrations: ['dist/migrations/*.js'],
       entities: ['dist/entities/*.js']
@@ -14,13 +17,12 @@ export const dataSourceObj = (isProd: boolean) => {
   } else {
     obj = {
       type: 'postgres',
-      database: 'testmigration',
-      username: 'postgres',
-      password: 'root',
+      database: process.env.DB_NAME,
+      username: process.env.DB_USER,
+      password: process.env.DB_PASS,
       logging: true,
       synchronize: true,
-      migrations: ['dist/migrations/*.js'],
-      entities: ['dist/entities/*.js']
+      entities: [Post, User, Vote]
     }
   }
 

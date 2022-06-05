@@ -24,3 +24,5 @@ yarn-error.log*
 *.tsbuildinfo
 
 /server/.env
+
+constant.ts
