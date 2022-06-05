@@ -10,7 +10,6 @@ import {
 import { Cache, cacheExchange, Resolver } from '@urql/exchange-graphcache'
 import { betterUpdateQuery } from './betterUpdateQuery'
 import { isServer } from './isServer'
-import { SERVER_URL } from './constant'
 import gql from 'graphql-tag'
 
 const cursorPagination = (): Resolver => {
@@ -65,7 +64,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
   }
 
   return {
-    url: `${SERVER_URL}/graphql`,
+    url: `${process.env.SERVER_URL}/graphql`,
     fetchOptions: {
       credentials: 'include' as const,
       headers: cookie ? { cookie } : undefined
